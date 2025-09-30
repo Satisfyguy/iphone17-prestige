@@ -22,8 +22,21 @@ const Checkout = () => {
   const [status, setStatus] = useState<null | { state: string; confirmations?: number; txHash?: string }>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [remainingMs, setRemainingMs] = useState<number>(0);
+  const [totalMs, setTotalMs] = useState<number>(0);
   const [txHashInput, setTxHashInput] = useState<string>("");
   const [copied, setCopied] = useState<{ field: "address" | "amount" | null }>({ field: null });
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address1: "",
+    address2: "",
+    city: "",
+    postalCode: "",
+    country: "France",
+  });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const isEmpty = items.length === 0;
   const eurTotal = useMemo(() => total, [total]);
@@ -44,9 +57,17 @@ const Checkout = () => {
       if (!res.ok) throw new Error("Quote failed");
       const data = await res.json();
       setQuote(data);
+      // compute total duration for progress
+      const ttl = new Date(data.expiresAt).getTime() - Date.now();
+      setTotalMs(ttl > 0 ? ttl : 0);
       setStatus(null);
       try {
-        const payload = `${data.network}:${data.address}?amount=${data.amountUSDT}`;
+        const payload = (() => {
+          if (data.network === 'TRC-20') return `tron:${data.address}?amount=${data.amountUSDT}`;
+          if (data.network === 'ERC-20') return `${data.address}`; // EIP-681 token transfer is complex; keep simple
+          if (data.network === 'BEP-20') return `${data.address}`;
+          return `${data.address}`;
+        })();
         const url = await QRCode.toDataURL(payload, { width: 256 });
         setQrDataUrl(url);
       } catch (e) {
@@ -128,6 +149,43 @@ const Checkout = () => {
     }
   };
 
+  const downloadQr = () => {
+    if (!qrDataUrl) return;
+    const a = document.createElement('a');
+    a.href = qrDataUrl;
+    a.download = `usdt-${quote?.network?.toLowerCase() || 'qr'}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  // simple validation
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    if (!form.firstName.trim()) errors.firstName = 'Prénom requis';
+    if (!form.lastName.trim()) errors.lastName = 'Nom requis';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Email invalide';
+    if (!form.phone.trim()) errors.phone = 'Téléphone requis';
+    if (!form.address1.trim()) errors.address1 = 'Adresse requise';
+    if (!form.city.trim()) errors.city = 'Ville requise';
+    if (!form.postalCode.trim()) errors.postalCode = 'Code postal requis';
+    if (!form.country.trim()) errors.country = 'Pays requis';
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // persist to localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('checkout_form');
+      if (saved) setForm(JSON.parse(saved));
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem('checkout_form', JSON.stringify(form)); } catch {}
+  }, [form]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -147,7 +205,52 @@ const Checkout = () => {
               <div className="lg:col-span-2 space-y-6">
                 <Card className="p-6 gradient-card">
                   <h3 className="font-semibold mb-4">Adresse & Contact</h3>
-                  <p className="text-sm text-muted-foreground">(À implémenter) — formulaire adresse facturation/livraison</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm" htmlFor="firstName">Prénom</label>
+                      <input id="firstName" value={form.firstName} onChange={e=>setForm({...form, firstName: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.firstName? 'border-destructive': ''}`} />
+                      {formErrors.firstName && <div className="text-xs text-destructive mt-1">{formErrors.firstName}</div>}
+                    </div>
+                    <div>
+                      <label className="text-sm" htmlFor="lastName">Nom</label>
+                      <input id="lastName" value={form.lastName} onChange={e=>setForm({...form, lastName: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.lastName? 'border-destructive': ''}`} />
+                      {formErrors.lastName && <div className="text-xs text-destructive mt-1">{formErrors.lastName}</div>}
+                    </div>
+                    <div>
+                      <label className="text-sm" htmlFor="email">Email</label>
+                      <input id="email" type="email" value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.email? 'border-destructive': ''}`} />
+                      {formErrors.email && <div className="text-xs text-destructive mt-1">{formErrors.email}</div>}
+                    </div>
+                    <div>
+                      <label className="text-sm" htmlFor="phone">Téléphone</label>
+                      <input id="phone" value={form.phone} onChange={e=>setForm({...form, phone: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.phone? 'border-destructive': ''}`} />
+                      {formErrors.phone && <div className="text-xs text-destructive mt-1">{formErrors.phone}</div>}
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm" htmlFor="address1">Adresse</label>
+                      <input id="address1" value={form.address1} onChange={e=>setForm({...form, address1: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.address1? 'border-destructive': ''}`} />
+                      {formErrors.address1 && <div className="text-xs text-destructive mt-1">{formErrors.address1}</div>}
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm" htmlFor="address2">Complément (optionnel)</label>
+                      <input id="address2" value={form.address2} onChange={e=>setForm({...form, address2: e.target.value})} className="mt-1 w-full rounded-md border px-3 py-2 bg-background" />
+                    </div>
+                    <div>
+                      <label className="text-sm" htmlFor="city">Ville</label>
+                      <input id="city" value={form.city} onChange={e=>setForm({...form, city: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.city? 'border-destructive': ''}`} />
+                      {formErrors.city && <div className="text-xs text-destructive mt-1">{formErrors.city}</div>}
+                    </div>
+                    <div>
+                      <label className="text-sm" htmlFor="postalCode">Code postal</label>
+                      <input id="postalCode" value={form.postalCode} onChange={e=>setForm({...form, postalCode: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.postalCode? 'border-destructive': ''}`} />
+                      {formErrors.postalCode && <div className="text-xs text-destructive mt-1">{formErrors.postalCode}</div>}
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm" htmlFor="country">Pays</label>
+                      <input id="country" value={form.country} onChange={e=>setForm({...form, country: e.target.value})} className={`mt-1 w-full rounded-md border px-3 py-2 bg-background ${formErrors.country? 'border-destructive': ''}`} />
+                      {formErrors.country && <div className="text-xs text-destructive mt-1">{formErrors.country}</div>}
+                    </div>
+                  </div>
                 </Card>
                 <Card className="p-6 gradient-card">
                   <h3 className="font-semibold mb-4">Paiement en USDT</h3>
@@ -184,18 +287,37 @@ const Checkout = () => {
                         </div>
                         {quote.memo && <div className="text-sm break-all">Mémo: {quote.memo}</div>}
                         <div className="flex gap-4 mt-3 items-start">
-                          {qrDataUrl && <img src={qrDataUrl} alt="QR USDT" className="w-40 h-40" />}
-                          <div className="text-xs text-muted-foreground">
+                          {qrDataUrl && (
+                            <div className="flex flex-col items-center gap-2">
+                              <img src={qrDataUrl} alt="QR USDT" className="w-40 h-40" />
+                              <Button size="sm" variant="outline" onClick={downloadQr}>Télécharger le QR</Button>
+                            </div>
+                          )}
+                          <div className="flex-1 text-xs text-muted-foreground">
                             <div>Expire: {new Date(quote.expiresAt).toLocaleString()}</div>
                             <div>Temps restant: {Math.max(0, Math.floor(remainingMs / 1000))}s</div>
+                            <div className="mt-2 h-2 w-full rounded bg-muted overflow-hidden">
+                              <div
+                                className="h-2 bg-primary transition-all"
+                                style={{ width: `${Math.max(0, Math.min(100, totalMs ? ((totalMs - Math.max(0, remainingMs)) / totalMs) * 100 : 0))}%` }}
+                              />
+                            </div>
                           </div>
                         </div>
+                        {remainingMs <= 0 && (
+                          <div className="mt-3">
+                            <Button variant="hero" onClick={requestQuote}>Régénérer le devis</Button>
+                          </div>
+                        )}
                         <div className="mt-3 space-y-3">
                           <div className="flex items-center gap-3">
                             <Button variant="outline" onClick={pollStatus}>Rafraîchir statut</Button>
                             {status && (
                               <span className="text-sm">
-                                Statut: {status.state}{status.confirmations !== undefined ? ` (${status.confirmations} conf)` : ""}
+                                <span className={`px-2 py-0.5 rounded border ${status.state === 'confirmed' ? 'text-green-600 border-green-600' : status.state === 'submitted' ? 'text-amber-600 border-amber-600' : status.state === 'expired' ? 'text-red-600 border-red-600' : 'text-muted-foreground border-muted-foreground'}`}>
+                                  {status.state}
+                                </span>
+                                {status.confirmations !== undefined ? ` (${status.confirmations} conf)` : ""}
                                 {status.txHash ? ` — ${status.txHash}` : ""}
                               </span>
                             )}
@@ -213,10 +335,15 @@ const Checkout = () => {
                         {status?.state === "confirmed" && (
                           <div className="mt-3">
                             <Button onClick={async () => {
+                              if (!validateForm()) {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                return;
+                              }
                               const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.quoteId }) });
                               if (!res.ok) return alert('Création de commande échouée');
                               const order = await res.json();
-                              alert(`Commande créée: ${order.orderId}`);
+                              const params = new URLSearchParams({ orderId: order.orderId, txHash: status?.txHash || '', network: quote.network });
+                              window.location.href = `/success?${params.toString()}`;
                             }}>
                               Finaliser la commande
                             </Button>

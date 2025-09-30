@@ -13,6 +13,7 @@ import APropos from "./pages/APropos";
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "@/hooks/useCart";
 import Checkout from "./pages/Checkout";
+import Success from "./pages/Success";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/comparateur" element={<Comparateur />} />
             <Route path="/panier" element={<Panier />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/success" element={<Success />} />
             <Route path="/accessoires" element={<Accessoires />} />
             <Route path="/support" element={<Support />} />
             <Route path="/a-propos" element={<APropos />} />

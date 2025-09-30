@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { ShoppingBag, Trash2 } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
 
 const Panier = () => {
-  // Mock empty cart for now
-  const cartItems: any[] = [];
+  const { items, total, changeQty, removeItem, clear } = useCart();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -17,7 +17,7 @@ const Panier = () => {
         <div className="container mx-auto px-4 max-w-4xl">
           <h1 className="mb-8">Panier</h1>
 
-          {cartItems.length === 0 ? (
+          {items.length === 0 ? (
             <Card className="p-12 text-center gradient-card">
               <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
               <h2 className="text-2xl font-semibold mb-2">Votre panier est vide</h2>
@@ -34,8 +34,8 @@ const Panier = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
-                {cartItems.map((item, index) => (
-                  <Card key={index} className="p-6 gradient-card">
+                {items.map((item, index) => (
+                  <Card key={`${item.id}-${item.color}-${item.storage}-${index}`} className="p-6 gradient-card">
                     <div className="flex gap-4">
                       <img 
                         src={item.image} 
@@ -47,9 +47,16 @@ const Panier = () => {
                         <p className="text-sm text-muted-foreground mb-2">
                           {item.color} - {item.storage}
                         </p>
-                        <p className="text-lg font-bold">{item.price}€</p>
+                        <div className="flex items-center gap-3">
+                          <div className="inline-flex items-center border rounded-md overflow-hidden">
+                            <button className="px-3 py-1" onClick={() => changeQty(item.id, item.color, item.storage, Math.max(1, item.qty - 1))}>-</button>
+                            <span className="px-3 py-1">{item.qty}</span>
+                            <button className="px-3 py-1" onClick={() => changeQty(item.id, item.color, item.storage, item.qty + 1)}>+</button>
+                          </div>
+                          <span className="font-semibold">{item.price * item.qty}€</span>
+                        </div>
                       </div>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" onClick={() => removeItem(item.id, item.color, item.storage)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -64,7 +71,7 @@ const Panier = () => {
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Sous-total</span>
-                      <span className="font-semibold">0€</span>
+                      <span className="font-semibold">{total}€</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Livraison</span>
@@ -73,13 +80,16 @@ const Panier = () => {
                     <div className="border-t border-border pt-3">
                       <div className="flex justify-between">
                         <span className="font-semibold">Total</span>
-                        <span className="text-2xl font-bold">0€</span>
+                        <span className="text-2xl font-bold">{total}€</span>
                       </div>
                     </div>
                   </div>
-                  <Button variant="hero" className="w-full" size="lg">
-                    Commander
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button variant="outline" className="w-1/3" onClick={clear}>Vider</Button>
+                    <Button variant="hero" className="flex-1" size="lg">
+                      Commander
+                    </Button>
+                  </div>
                 </Card>
               </div>
             </div>

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { getProductById } from "@/data/products";
 import { ShoppingCart, Check } from "lucide-react";
 import { toast } from "sonner";
+import { useCart } from "@/hooks/useCart";
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +16,10 @@ const Product = () => {
   const [selectedColor, setSelectedColor] = useState(product?.colors[0]?.name || "");
   const [selectedStorage, setSelectedStorage] = useState(product?.storage[0]?.size || "");
   
-  const currentColorImage = product?.colors.find(c => c.name === selectedColor)?.image || product?.image;
+  const currentColor = product?.colors.find(c => c.name === selectedColor);
+  const currentColorImage = currentColor?.image || product?.image;
+
+  const { addItem } = useCart();
 
   if (!product) {
     return (
@@ -38,6 +42,17 @@ const Product = () => {
   const totalPrice = product.price + selectedStoragePrice;
 
   const handleAddToCart = () => {
+    addItem(
+      {
+        id: product.id,
+        name: product.fullName,
+        image: currentColorImage || "",
+        color: selectedColor,
+        storage: selectedStorage,
+        price: totalPrice,
+      },
+      1
+    );
     toast.success("Produit ajouté au panier", {
       description: `${product.name} - ${selectedColor} - ${selectedStorage}`,
     });

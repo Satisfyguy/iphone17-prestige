@@ -1,0 +1,36 @@
+// Prisma schema for Vercel Postgres deployment
+// datasource and generator
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Quote {
+  quoteId     String  @id
+  amountUSDT  String
+  network     String
+  address     String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  status      String
+  txHash      String?
+
+  orders      Order[]
+}
+
+model Order {
+  orderId   String   @id
+  quoteId   String
+  status    String
+  totalUSDT String
+  createdAt DateTime @default(now())
+
+  quote     Quote    @relation(fields: [quoteId], references: [quoteId], onDelete: Cascade)
+
+  @@index([quoteId])
+}

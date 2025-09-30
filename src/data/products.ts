@@ -88,60 +88,60 @@ export const products: Product[] = [
     id: "iphone-17-pro",
     name: "iPhone 17 Pro",
     fullName: "iPhone 17 Pro",
-    price: 1099,
-    image: "/src/assets/iphone-17-pro-titanium.jpg",
+    price: 1329,
+    image: "/src/assets/iphone-17-pro-orange.png",
     features: [
       "Puce A18 Pro",
-      "Triple appareil photo Pro 48MP",
-      "Écran ProMotion 120Hz"
+      "Système caméra Pro Fusion",
+      "Écran ProMotion 120Hz de 6,3 pouces"
     ],
     description: "Conçu pour les professionnels et les créateurs. L'iPhone 17 Pro offre des performances inégalées avec la puce A18 Pro, un système photo révolutionnaire et un écran ProMotion fluide.",
     specs: {
-      screen: "6.1\" Super Retina XDR ProMotion 120Hz",
+      screen: "6,3\" Super Retina XDR ProMotion 120Hz",
       chip: "Puce A18 Pro",
-      camera: "Triple Pro 48MP",
-      battery: "Jusqu'à 23h de lecture vidéo"
+      camera: "Système caméra Pro Fusion",
+      battery: "Autonomie exceptionnelle"
     },
     colors: [
-      { name: "Titane naturel", hex: "#8B8B8B" },
-      { name: "Titane bleu", hex: "#4A6FA5" },
-      { name: "Titane blanc", hex: "#E5E5E5" },
-      { name: "Titane noir", hex: "#2C2C2E" }
+      { name: "Argent", hex: "#E5E5EA" },
+      { name: "Orange cosmique", hex: "#E67E50" },
+      { name: "Bleu intense", hex: "#3B4B6B" }
     ],
     storage: [
       { size: "256 GB", price: 0 },
-      { size: "512 GB", price: 200 },
-      { size: "1 TB", price: 500 }
+      { size: "512 GB", price: 250 },
+      { size: "1 TB", price: 500 },
+      { size: "2 TB", price: 1150 }
     ]
   },
   {
     id: "iphone-17-pro-max",
     name: "iPhone 17 Pro Max",
     fullName: "iPhone 17 Pro Max",
-    price: 1199,
+    price: 1479,
     image: "/src/assets/iphone-17-pro-max-titanium.jpg",
     features: [
-      "Écran 6.7\" ProMotion",
+      "Écran 6,9\" ProMotion",
       "Autonomie exceptionnelle",
-      "Système photo Pro avancé"
+      "Système caméra Pro Fusion avancé"
     ],
-    description: "Le summum de l'innovation iPhone. Avec son immense écran 6.7\", son autonomie record et son système photo professionnel, l'iPhone 17 Pro Max est le smartphone le plus avancé jamais créé.",
+    description: "Le summum de l'innovation iPhone. Avec son immense écran 6,9\", son autonomie record et son système photo professionnel, l'iPhone 17 Pro Max est le smartphone le plus avancé jamais créé.",
     specs: {
-      screen: "6.7\" Super Retina XDR ProMotion 120Hz",
+      screen: "6,9\" Super Retina XDR ProMotion 120Hz",
       chip: "Puce A18 Pro",
-      camera: "Triple Pro 48MP avec téléobjectif 5x",
-      battery: "Jusqu'à 29h de lecture vidéo"
+      camera: "Système caméra Pro Fusion avec téléobjectif 5x",
+      battery: "Autonomie record"
     },
     colors: [
-      { name: "Titane naturel", hex: "#8B8B8B" },
-      { name: "Titane bleu", hex: "#4A6FA5" },
-      { name: "Titane blanc", hex: "#E5E5E5" },
-      { name: "Titane noir", hex: "#2C2C2E" }
+      { name: "Argent", hex: "#E5E5EA" },
+      { name: "Orange cosmique", hex: "#E67E50" },
+      { name: "Bleu intense", hex: "#3B4B6B" }
     ],
     storage: [
       { size: "256 GB", price: 0 },
-      { size: "512 GB", price: 200 },
-      { size: "1 TB", price: 500 }
+      { size: "512 GB", price: 250 },
+      { size: "1 TB", price: 500 },
+      { size: "2 TB", price: 1000 }
     ]
   }
 ];

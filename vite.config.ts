@@ -8,6 +8,12 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/api": {
+        target: "http://localhost:5175",
+        changeOrigin: true,
+      },
+    },
   },
   // base: './', // Explicitly set base to relative path for better deployment compatibility
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),

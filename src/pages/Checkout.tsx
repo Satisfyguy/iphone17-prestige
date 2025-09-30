@@ -1,0 +1,156 @@
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks/useCart";
+import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
+
+const Checkout = () => {
+  const { items, total } = useCart();
+  const [network, setNetwork] = useState<string>("TRC-20");
+  const [isRequesting, setIsRequesting] = useState<boolean>(false);
+  const [quote, setQuote] = useState<null | {
+    quoteId: string;
+    amountUSDT: string;
+    network: string;
+    address: string;
+    memo?: string;
+    expiresAt: string;
+  }>(null);
+  const [status, setStatus] = useState<null | { state: string; confirmations?: number; txHash?: string }>(null);
+
+  const isEmpty = items.length === 0;
+  const eurTotal = useMemo(() => total, [total]);
+
+  const requestQuote = async () => {
+    setIsRequesting(true);
+    try {
+      const res = await fetch("/api/payment/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currency: "EUR",
+          amount: eurTotal,
+          network,
+          cart: items.map(i => ({ id: i.id, color: i.color, storage: i.storage, qty: i.qty, price: i.price })),
+        }),
+      });
+      if (!res.ok) throw new Error("Quote failed");
+      const data = await res.json();
+      setQuote(data);
+    } catch (e) {
+      console.error(e);
+      alert("Impossible de générer le devis USDT. Réessayez.");
+    } finally {
+      setIsRequesting(false);
+    }
+  };
+
+  const pollStatus = async () => {
+    if (!quote) return;
+    try {
+      const res = await fetch(`/api/payment/status/${quote.quoteId}`);
+      if (!res.ok) throw new Error("status failed");
+      const data = await res.json();
+      const mapped = { state: data.status as string, confirmations: data.confirmations as number | undefined, txHash: data.txHash as string | undefined };
+      setStatus(mapped);
+    } catch (e) {
+      console.error(e);
+      alert("Impossible de vérifier le statut. Réessayez.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 py-12">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <h1 className="mb-8">Checkout</h1>
+
+          {isEmpty ? (
+            <Card className="p-12 text-center gradient-card">
+              <h2 className="text-2xl font-semibold mb-2">Votre panier est vide</h2>
+              <Link to="/">
+                <Button variant="hero" size="lg">Retour à l'accueil</Button>
+              </Link>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-6">
+                <Card className="p-6 gradient-card">
+                  <h3 className="font-semibold mb-4">Adresse & Contact</h3>
+                  <p className="text-sm text-muted-foreground">(À implémenter) — formulaire adresse facturation/livraison</p>
+                </Card>
+                <Card className="p-6 gradient-card">
+                  <h3 className="font-semibold mb-4">Paiement en USDT</h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-3 gap-3">
+                      {["TRC-20", "ERC-20", "BEP-20"].map(n => (
+                        <button
+                          key={n}
+                          onClick={() => setNetwork(n)}
+                          className={`p-3 rounded-lg border-2 transition-smooth ${network === n ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
+                        >
+                          {n}
+                        </button>
+                      ))}
+                    </div>
+                    <Button onClick={requestQuote} disabled={isRequesting} variant="hero">
+                      Générer le devis USDT
+                    </Button>
+                    {quote && (
+                      <div className="mt-4 p-4 rounded-lg border">
+                        <div className="font-semibold">Devis #{quote.quoteId}</div>
+                        <div className="text-sm text-muted-foreground">Réseau: {quote.network}</div>
+                        <div className="text-sm">Montant: {quote.amountUSDT} USDT</div>
+                        <div className="text-sm break-all">Adresse: {quote.address}</div>
+                        {quote.memo && <div className="text-sm break-all">Mémo: {quote.memo}</div>}
+                        <div className="text-xs text-muted-foreground">Expire: {new Date(quote.expiresAt).toLocaleString()}</div>
+                        <div className="mt-3 flex items-center gap-3">
+                          <Button variant="outline" onClick={pollStatus}>J'ai payé</Button>
+                          {status && (
+                            <span className="text-sm">
+                              Statut: {status.state}{status.confirmations !== undefined ? ` (${status.confirmations} conf)` : ""}
+                              {status.txHash ? ` — ${status.txHash}` : ""}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </div>
+
+              <div>
+                <Card className="p-6 gradient-card sticky top-24">
+                  <h3 className="font-semibold mb-4">Récapitulatif</h3>
+                  <div className="space-y-3 mb-6">
+                    {items.map((item) => (
+                      <div key={`${item.id}-${item.color}-${item.storage}`} className="flex justify-between text-sm">
+                        <span>{item.name} × {item.qty}</span>
+                        <span>{item.price * item.qty}€</span>
+                      </div>
+                    ))}
+                    <div className="border-t border-border pt-3">
+                      <div className="flex justify-between">
+                        <span className="font-semibold">Total</span>
+                        <span className="text-2xl font-bold">{eurTotal}€</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Link to="/panier"><Button variant="outline" className="w-full">Retour au panier</Button></Link>
+                </Card>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Checkout;
+
+

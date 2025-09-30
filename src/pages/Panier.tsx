@@ -86,9 +86,11 @@ const Panier = () => {
                   </div>
                   <div className="flex gap-3">
                     <Button variant="outline" className="w-1/3" onClick={clear}>Vider</Button>
-                    <Button variant="hero" className="flex-1" size="lg">
-                      Commander
-                    </Button>
+                    <Link to="/checkout" className="flex-1">
+                      <Button variant="hero" className="w-full" size="lg">
+                        Commander
+                      </Button>
+                    </Link>
                   </div>
                 </Card>
               </div>

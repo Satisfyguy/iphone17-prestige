@@ -12,6 +12,7 @@ import Support from "./pages/Support";
 import APropos from "./pages/APropos";
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "@/hooks/useCart";
+import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/produit/:id" element={<Product />} />
             <Route path="/comparateur" element={<Comparateur />} />
             <Route path="/panier" element={<Panier />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/accessoires" element={<Accessoires />} />
             <Route path="/support" element={<Support />} />
             <Route path="/a-propos" element={<APropos />} />

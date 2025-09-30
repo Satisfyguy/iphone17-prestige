@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import * as QRCode from "qrcode";
 
 const Checkout = () => {
   const { items, total } = useCart();
@@ -19,6 +20,8 @@ const Checkout = () => {
     expiresAt: string;
   }>(null);
   const [status, setStatus] = useState<null | { state: string; confirmations?: number; txHash?: string }>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string>("");
+  const [remainingMs, setRemainingMs] = useState<number>(0);
 
   const isEmpty = items.length === 0;
   const eurTotal = useMemo(() => total, [total]);
@@ -39,6 +42,15 @@ const Checkout = () => {
       if (!res.ok) throw new Error("Quote failed");
       const data = await res.json();
       setQuote(data);
+      setStatus(null);
+      try {
+        const payload = `${data.network}:${data.address}?amount=${data.amountUSDT}`;
+        const url = await QRCode.toDataURL(payload, { width: 256 });
+        setQrDataUrl(url);
+      } catch (e) {
+        console.error("QR gen failed", e);
+        setQrDataUrl("");
+      }
     } catch (e) {
       console.error(e);
       alert("Impossible de générer le devis USDT. Réessayez.");
@@ -60,6 +72,18 @@ const Checkout = () => {
       alert("Impossible de vérifier le statut. Réessayez.");
     }
   };
+
+  // countdown timer for quote expiry
+  useEffect(() => {
+    if (!quote) return;
+    const expiry = new Date(quote.expiresAt).getTime();
+    const id = setInterval(() => {
+      const remain = expiry - Date.now();
+      setRemainingMs(remain);
+      if (remain <= 0) clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [quote]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -106,7 +130,13 @@ const Checkout = () => {
                         <div className="text-sm">Montant: {quote.amountUSDT} USDT</div>
                         <div className="text-sm break-all">Adresse: {quote.address}</div>
                         {quote.memo && <div className="text-sm break-all">Mémo: {quote.memo}</div>}
-                        <div className="text-xs text-muted-foreground">Expire: {new Date(quote.expiresAt).toLocaleString()}</div>
+                        <div className="flex gap-4 mt-3 items-start">
+                          {qrDataUrl && <img src={qrDataUrl} alt="QR USDT" className="w-40 h-40" />}
+                          <div className="text-xs text-muted-foreground">
+                            <div>Expire: {new Date(quote.expiresAt).toLocaleString()}</div>
+                            <div>Temps restant: {Math.max(0, Math.floor(remainingMs / 1000))}s</div>
+                          </div>
+                        </div>
                         <div className="mt-3 flex items-center gap-3">
                           <Button variant="outline" onClick={pollStatus}>J'ai payé</Button>
                           {status && (
@@ -116,6 +146,18 @@ const Checkout = () => {
                             </span>
                           )}
                         </div>
+                        {status?.state === "confirmed" && (
+                          <div className="mt-3">
+                            <Button onClick={async () => {
+                              const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.quoteId }) });
+                              if (!res.ok) return alert('Création de commande échouée');
+                              const order = await res.json();
+                              alert(`Commande créée: ${order.orderId}`);
+                            }}>
+                              Finaliser la commande
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

@@ -15,6 +15,7 @@ type StoredQuote = {
 };
 
 const quotesStore = new Map<string, StoredQuote>();
+const ordersStore = new Map<string, { orderId: string; quoteId: string; status: string; totalUSDT: string }>();
 
 app.post("/api/payment/quote", (req, res) => {
   const { currency, amount, network } = req.body || {};
@@ -65,6 +66,18 @@ app.get("/api/payment/status/:quoteId", (req, res) => {
   }
   // after 10s, consider confirmed in mock
   return res.json({ status: "confirmed", confirmations: 1, txHash: "MOCK_TRX_HASH_" + quoteId });
+});
+
+// Mock order creation after confirmation
+app.post("/api/orders", (req, res) => {
+  const { quoteId } = req.body || {};
+  if (!quoteId) return res.status(400).json({ error: "invalid_body" });
+  const q = quotesStore.get(quoteId);
+  if (!q) return res.status(404).json({ error: "quote_not_found" });
+  const orderId = "ord_" + Math.random().toString(36).slice(2, 10);
+  const order = { orderId, quoteId, status: "created", totalUSDT: q.amountUSDT };
+  ordersStore.set(orderId, order);
+  res.json(order);
 });
 
 const port = process.env.PORT || 5175;

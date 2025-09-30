@@ -15,6 +15,7 @@ export interface Product {
   colors: Array<{
     name: string;
     hex: string;
+    image: string;
   }>;
   storage: Array<{
     size: string;
@@ -42,11 +43,11 @@ export const products: Product[] = [
       battery: "Jusqu'à 22h de lecture vidéo"
     },
     colors: [
-      { name: "Bleu", hex: "#4A90E2" },
-      { name: "Rose", hex: "#FFB6C1" },
-      { name: "Jaune", hex: "#FFD700" },
-      { name: "Noir", hex: "#1D1D1F" },
-      { name: "Blanc", hex: "#F5F5F7" }
+      { name: "Bleu", hex: "#4A90E2", image: "/src/assets/iphone-17-blue.jpg" },
+      { name: "Rose", hex: "#FFB6C1", image: "/src/assets/iphone-17-blue.jpg" },
+      { name: "Jaune", hex: "#FFD700", image: "/src/assets/iphone-17-blue.jpg" },
+      { name: "Noir", hex: "#1D1D1F", image: "/src/assets/iphone-17-blue.jpg" },
+      { name: "Blanc", hex: "#F5F5F7", image: "/src/assets/iphone-17-blue.jpg" }
     ],
     storage: [
       { size: "128 GB", price: 0 },
@@ -73,10 +74,10 @@ export const products: Product[] = [
       battery: "Jusqu'à 20h de lecture vidéo"
     },
     colors: [
-      { name: "Bleu", hex: "#4A90E2" },
-      { name: "Rose", hex: "#FFB6C1" },
-      { name: "Blanc", hex: "#F5F5F7" },
-      { name: "Noir", hex: "#1D1D1F" }
+      { name: "Bleu", hex: "#4A90E2", image: "/src/assets/iphone-17-air-white.jpg" },
+      { name: "Rose", hex: "#FFB6C1", image: "/src/assets/iphone-17-air-white.jpg" },
+      { name: "Blanc", hex: "#F5F5F7", image: "/src/assets/iphone-17-air-white.jpg" },
+      { name: "Noir", hex: "#1D1D1F", image: "/src/assets/iphone-17-air-white.jpg" }
     ],
     storage: [
       { size: "128 GB", price: 0 },
@@ -103,15 +104,14 @@ export const products: Product[] = [
       battery: "Autonomie exceptionnelle"
     },
     colors: [
-      { name: "Argent", hex: "#E5E5EA" },
-      { name: "Orange cosmique", hex: "#E67E50" },
-      { name: "Bleu intense", hex: "#3B4B6B" }
+      { name: "Argent", hex: "#E5E5EA", image: "/src/assets/iphone-17-pro-silver.webp" },
+      { name: "Orange cosmique", hex: "#E67E50", image: "/src/assets/iphone-17-pro-orange.webp" },
+      { name: "Bleu intense", hex: "#3B4B6B", image: "/src/assets/iphone-17-pro-blue.webp" }
     ],
     storage: [
       { size: "256 GB", price: 0 },
       { size: "512 GB", price: 250 },
-      { size: "1 TB", price: 500 },
-      { size: "2 TB", price: 1150 }
+      { size: "1 TB", price: 500 }
     ]
   },
   {
@@ -133,9 +133,9 @@ export const products: Product[] = [
       battery: "Autonomie record"
     },
     colors: [
-      { name: "Argent", hex: "#E5E5EA" },
-      { name: "Orange cosmique", hex: "#E67E50" },
-      { name: "Bleu intense", hex: "#3B4B6B" }
+      { name: "Argent", hex: "#E5E5EA", image: "/src/assets/iphone-17-pro-silver.webp" },
+      { name: "Orange cosmique", hex: "#E67E50", image: "/src/assets/iphone-17-pro-orange.webp" },
+      { name: "Bleu intense", hex: "#3B4B6B", image: "/src/assets/iphone-17-pro-blue.webp" }
     ],
     storage: [
       { size: "256 GB", price: 0 },

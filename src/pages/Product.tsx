@@ -14,6 +14,8 @@ const Product = () => {
   
   const [selectedColor, setSelectedColor] = useState(product?.colors[0]?.name || "");
   const [selectedStorage, setSelectedStorage] = useState(product?.storage[0]?.size || "");
+  
+  const currentColorImage = product?.colors.find(c => c.name === selectedColor)?.image || product?.image;
 
   if (!product) {
     return (
@@ -61,9 +63,9 @@ const Product = () => {
             <div className="animate-fade-in">
               <div className="aspect-square rounded-2xl overflow-hidden bg-secondary shadow-apple-lg">
                 <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-full object-cover"
+                  src={currentColorImage} 
+                  alt={`${product.name} - ${selectedColor}`}
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>

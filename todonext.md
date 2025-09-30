@@ -26,12 +26,21 @@ Ce document liste les tâches principales et secondaires (style task manager) po
   - [ ] Gestion des écarts: sous‑paiement, sur‑paiement, réseau incorrect, double spend, expiré — règles business (complément, remboursement, avoir)
   - [ ] Réconciliation et idempotence: associer tx hash ↔ commande, éviter double comptabilisation
   - [ ] Sécurité/ops: rotation des clés/API, adresse par commande, pas de réutilisation d’adresse, logs détaillés
+  - [ ] QR payload conforme au réseau (tron:, ethereum:, bsc:) + affichage `memo/tag` si requis
+  - [ ] Boutons « Copier l’adresse » et « Copier le montant » + feedback visuel
+  - [ ] Timer d’expiration avec UX de régénération de devis (même panier)
+  - [ ] Polling automatique du statut jusqu’à confirmation/expiration (pas uniquement bouton)
+  - [ ] Désactiver modification du panier une fois un devis actif (ou invalider le devis si modification)
+  - [ ] Persistance `quotes` et statuts de paiement en base de données (remplacer `Map` mémoire)
+  - [ ] Vérification signature des webhooks + politique de retry (exponentiel) + journaux
 
 - [ ] Création/Validation de Commande (P0)
   - [ ] Backend: `POST /api/orders` (valide panier, calcule TVA/frais, réserve stock)
   - [ ] Modèle commande (id, lignes, montants, client, statut, paiements, réseau, tx hash, confirmations)
   - [ ] Idempotence sur création de commande (clé idempotency)
   - [ ] Email de confirmation (Resend/SendGrid) + facture PDF (facultatif P1)
+  - [ ] Persistance `orders` en base + liaison forte `order ↔ quote ↔ tx`
+  - [ ] Page de succès (récap complet, lien explorer, justificatif PDF si dispo)
 
 - [ ] Gestion Stock/Produits (P0)
   - [ ] Source de vérité des stocks (DB ou service) + décrément post-paiement confirmé on-chain

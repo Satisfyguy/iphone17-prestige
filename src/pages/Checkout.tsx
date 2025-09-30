@@ -22,6 +22,8 @@ const Checkout = () => {
   const [status, setStatus] = useState<null | { state: string; confirmations?: number; txHash?: string }>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [remainingMs, setRemainingMs] = useState<number>(0);
+  const [txHashInput, setTxHashInput] = useState<string>("");
+  const [copied, setCopied] = useState<{ field: "address" | "amount" | null }>({ field: null });
 
   const isEmpty = items.length === 0;
   const eurTotal = useMemo(() => total, [total]);
@@ -73,6 +75,25 @@ const Checkout = () => {
     }
   };
 
+  const submitTx = async () => {
+    if (!quote) return;
+    if (!txHashInput.trim()) return alert("Entrez le hash de la transaction.");
+    try {
+      const res = await fetch('/api/payment/submit-tx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quoteId: quote.quoteId, txHash: txHashInput.trim() })
+      });
+      if (!res.ok) throw new Error('submit failed');
+      const data = await res.json();
+      setStatus({ state: data.status as string, txHash: data.txHash as string | undefined });
+      alert('Transaction soumise. Vérification en cours.');
+    } catch (e) {
+      console.error(e);
+      alert("Soumission du hash échouée. Vérifiez et réessayez.");
+    }
+  };
+
   // countdown timer for quote expiry
   useEffect(() => {
     if (!quote) return;
@@ -84,6 +105,28 @@ const Checkout = () => {
     }, 1000);
     return () => clearInterval(id);
   }, [quote]);
+
+  // auto polling while quote active and not confirmed/expired
+  useEffect(() => {
+    if (!quote) return;
+    if (status?.state === 'confirmed' || status?.state === 'expired') return;
+    const id = setInterval(() => {
+      pollStatus();
+    }, 5000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quote, status?.state]);
+
+  const copyToClipboard = async (text: string, field: "address" | "amount") => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied({ field });
+      setTimeout(() => setCopied({ field: null }), 1500);
+    } catch (e) {
+      console.error('copy failed', e);
+      alert('Copie impossible, copiez manuellement.');
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -127,8 +170,18 @@ const Checkout = () => {
                       <div className="mt-4 p-4 rounded-lg border">
                         <div className="font-semibold">Devis #{quote.quoteId}</div>
                         <div className="text-sm text-muted-foreground">Réseau: {quote.network}</div>
-                        <div className="text-sm">Montant: {quote.amountUSDT} USDT</div>
-                        <div className="text-sm break-all">Adresse: {quote.address}</div>
+                        <div className="text-sm flex items-center gap-2">
+                          <span>Montant: {quote.amountUSDT} USDT</span>
+                          <Button variant="outline" size="sm" onClick={() => copyToClipboard(quote.amountUSDT, 'amount')}>
+                            {copied.field === 'amount' ? 'Copié' : 'Copier'}
+                          </Button>
+                        </div>
+                        <div className="text-sm break-all flex items-center gap-2">
+                          <span>Adresse: {quote.address}</span>
+                          <Button variant="outline" size="sm" onClick={() => copyToClipboard(quote.address, 'address')}>
+                            {copied.field === 'address' ? 'Copié' : 'Copier'}
+                          </Button>
+                        </div>
                         {quote.memo && <div className="text-sm break-all">Mémo: {quote.memo}</div>}
                         <div className="flex gap-4 mt-3 items-start">
                           {qrDataUrl && <img src={qrDataUrl} alt="QR USDT" className="w-40 h-40" />}
@@ -137,13 +190,24 @@ const Checkout = () => {
                             <div>Temps restant: {Math.max(0, Math.floor(remainingMs / 1000))}s</div>
                           </div>
                         </div>
-                        <div className="mt-3 flex items-center gap-3">
-                          <Button variant="outline" onClick={pollStatus}>J'ai payé</Button>
-                          {status && (
-                            <span className="text-sm">
-                              Statut: {status.state}{status.confirmations !== undefined ? ` (${status.confirmations} conf)` : ""}
-                              {status.txHash ? ` — ${status.txHash}` : ""}
-                            </span>
+                        <div className="mt-3 space-y-3">
+                          <div className="flex items-center gap-3">
+                            <Button variant="outline" onClick={pollStatus}>Rafraîchir statut</Button>
+                            {status && (
+                              <span className="text-sm">
+                                Statut: {status.state}{status.confirmations !== undefined ? ` (${status.confirmations} conf)` : ""}
+                                {status.txHash ? ` — ${status.txHash}` : ""}
+                              </span>
+                            )}
+                          </div>
+                          {status?.state !== 'confirmed' && (
+                            <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
+                              <div className="flex-1">
+                                <label htmlFor="txhash" className="text-sm">Hash de transaction</label>
+                                <input id="txhash" value={txHashInput} onChange={e => setTxHashInput(e.target.value)} className="mt-1 w-full rounded-md border px-3 py-2 bg-background" placeholder="Collez le tx hash ici" />
+                              </div>
+                              <Button onClick={submitTx}>Soumettre la transaction</Button>
+                            </div>
                           )}
                         </div>
                         {status?.state === "confirmed" && (

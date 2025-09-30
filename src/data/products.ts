@@ -89,7 +89,7 @@ export const products: Product[] = [
     name: "iPhone 17 Pro",
     fullName: "iPhone 17 Pro",
     price: 1329,
-    image: "/src/assets/iphone-17-pro-orange.png",
+    image: "/src/assets/iphone-17-pro-orange.webp",
     features: [
       "Puce A18 Pro",
       "Système caméra Pro Fusion",
@@ -119,7 +119,7 @@ export const products: Product[] = [
     name: "iPhone 17 Pro Max",
     fullName: "iPhone 17 Pro Max",
     price: 1479,
-    image: "/src/assets/iphone-17-pro-max-titanium.jpg",
+    image: "/src/assets/iphone-17-pro-orange.webp",
     features: [
       "Écran 6,9\" ProMotion",
       "Autonomie exceptionnelle",

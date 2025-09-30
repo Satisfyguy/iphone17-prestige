@@ -11,12 +11,13 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ id, name, image, price, features }: ProductCardProps) => {
+  const resolvedImage = image.startsWith('/') ? image : `/${image}`;
   return (
     <Card className="overflow-hidden gradient-card border-border shadow-apple-md hover:shadow-apple-lg transition-smooth group">
       <Link to={`/produit/${id}`}>
         <div className="aspect-[4/3] overflow-hidden bg-secondary">
           <img 
-            src={image} 
+            src={resolvedImage} 
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
           />

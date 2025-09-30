@@ -6,8 +6,9 @@ import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/data/products";
 import { Check, Truck, Shield, RefreshCw, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import iphone17Colors from "@/assets/iphone-17-colors.webp"; // Updated import for the multiple colors image
-import iphoneAirColors from "@/assets/iphone-air-colors.webp"; // New import for iPhone Air multiple colors image
+// Remove all direct image imports as they are now in the public directory
+// import iphone17Colors from "@/assets/iphone-17-colors.webp";
+// import iphoneAirColors from "@/assets/iphone-air-colors.webp";
 
 const Home = () => {
   return (
@@ -41,7 +42,7 @@ const Home = () => {
             
             <div className="mt-16 animate-fade-in">
               <img 
-                src={iphone17Colors} 
+                src="/iphone-17-colors.webp" 
                 alt="iPhone 17" 
                 className="w-full max-w-4xl mx-auto rounded-2xl shadow-apple-lg"
               />

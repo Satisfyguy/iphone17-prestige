@@ -1,3 +1,30 @@
+// Remove all direct image imports as they are now in the public directory
+// import iphone17AirWhite from "/src/assets/iphone-17-air-white.jpg";
+// import iphone17Blue from "/src/assets/iphone-17-blue.jpg";
+// import iphone17ProBlue from "/src/assets/iphone-17-pro-blue.png";
+// import iphone17ProBlueWebp from "/src/assets/iphone-17-pro-blue.webp";
+// import iphone17ProMaxTitanium from "/src/assets/iphone-17-pro-max-titanium.jpg";
+// import iphone17ProOrange from "/src/assets/iphone-17-pro-orange.png";
+// import iphone17ProOrangeWebp from "/src/assets/iphone-17-pro-orange.webp";
+// import iphone17ProSilver from "/src/assets/iphone-17-pro-silver.png";
+// import iphone17ProSilverWebp from "/src/assets/iphone-17-pro-silver.webp";
+// import iphone17ProTitanium from "/src/assets/iphone-17-pro-titanium.jpg";
+
+// // iPhone 17 specific color images
+// import iphone17Brume from "/src/assets/iphone-17-brume.webp";
+// import iphone17Lavander from "/src/assets/iphone-17-lavender.webp";
+// import iphone17Black from "/src/assets/iphone-17-black.webp";
+// import iphone17White from "/src/assets/iphone-17-white.webp";
+// import iphone17Sauge from "/src/assets/iphone-17-sauge.webp";
+// import iphone17Colors from "/src/assets/iphone-17-colors.webp";
+
+// // iPhone Air specific color images
+// import iphoneAirBlancNuage from "/src/assets/iphone-air-Blanc-nuage.webp";
+// import iphoneAirBleuCiel from "/src/assets/iphone-air-bleu-ciel.webp";
+// import iphoneAirColors from "/src/assets/iphone-air-colors.webp";
+// import iphoneAirNoirSideral from "/src/assets/iphone-air-Noir-sidéral.webp";
+// import iphoneAirOrClair from "/src/assets/iphone-air-Or-Clair.webp";
+
 export interface Product {
   id: string;
   name: string;
@@ -29,7 +56,7 @@ export const products: Product[] = [
     name: "iPhone 17",
     fullName: "iPhone 17",
     price: 969,
-    image: "/src/assets/iphone-17-colors.webp", // Updated to use the correct combined colors image
+    image: "/iphone-17-colors.webp", // Updated to use the public directory path
     features: [
       "Puce A18 nouvelle génération",
       "Double appareil photo 48MP",
@@ -43,11 +70,11 @@ export const products: Product[] = [
       battery: "Jusqu'à 22h de lecture vidéo"
     },
     colors: [
-      { name: "Brume", hex: "#A7B1BF", image: "/src/assets/iphone-17-brume.webp" },
-      { name: "Lavande", hex: "#D0B8E9", image: "/src/assets/iphone-17-lavender.webp" },
-      { name: "Noir", hex: "#2B2B2B", image: "/src/assets/iphone-17-black.webp" },
-      { name: "Blanc", hex: "#F0F0F0", image: "/src/assets/iphone-17-white.webp" },
-      { name: "Sauge", hex: "#A0D468", image: "/src/assets/iphone-17-sauge.webp" }
+      { name: "Brume", hex: "#A7B1BF", image: "/iphone-17-brume.webp" },
+      { name: "Lavande", hex: "#D0B8E9", image: "/iphone-17-lavender.webp" },
+      { name: "Noir", hex: "#2B2B2B", image: "/iphone-17-black.webp" },
+      { name: "Blanc", hex: "#F0F0F0", image: "/iphone-17-white.webp" },
+      { name: "Sauge", hex: "#A0D468", image: "/iphone-17-sauge.webp" }
     ],
     storage: [
       { size: "256 Go", price: 0 },
@@ -59,7 +86,7 @@ export const products: Product[] = [
     name: "iPhone Air",
     fullName: "iPhone Air",
     price: 1229,
-    image: "/src/assets/iphone-air-colors.webp", // Updated image for iPhone Air
+    image: "/iphone-air-colors.webp", // Updated image for iPhone Air from public directory
     features: [
       "Design ultra-fin 5.5mm",
       "Léger et élégant",
@@ -73,10 +100,10 @@ export const products: Product[] = [
       battery: "Jusqu'à 20h de lecture vidéo"
     },
     colors: [
-      { name: "Bleu ciel", hex: "#B0D9E7", image: "/src/assets/iphone-air-bleu-ciel.webp" },
-      { name: "Blanc nuage", hex: "#E0E0E0", image: "/src/assets/iphone-air-Blanc-nuage.webp" },
-      { name: "Or clair", hex: "#F0E6D2", image: "/src/assets/iphone-air-Or-Clair.webp" },
-      { name: "Noir sidéral", hex: "#303030", image: "/src/assets/iphone-air-Noir-sidéral.webp" }
+      { name: "Bleu ciel", hex: "#B0D9E7", image: "/iphone-air-bleu-ciel.webp" },
+      { name: "Blanc nuage", hex: "#E0E0E0", image: "/iphone-air-Blanc-nuage.webp" },
+      { name: "Or clair", hex: "#F0E6D2", image: "/iphone-air-Or-Clair.webp" },
+      { name: "Noir sidéral", hex: "#303030", image: "/iphone-air-Noir-sidéral.webp" }
     ],
     storage: [
       { size: "256 Go", price: 0 },
@@ -89,7 +116,7 @@ export const products: Product[] = [
     name: "iPhone 17 Pro",
     fullName: "iPhone 17 Pro",
     price: 1329,
-    image: "/src/assets/iphone-17-pro-orange.webp", // Ensure this path is correct
+    image: "/iphone-17-pro-orange.webp", // Updated image path
     features: [
       "Puce A18 Pro",
       "Système caméra Pro Fusion",
@@ -103,9 +130,9 @@ export const products: Product[] = [
       battery: "Autonomie exceptionnelle"
     },
     colors: [
-      { name: "Argent", hex: "#E5E5EA", image: "/src/assets/iphone-17-pro-silver.webp" },
-      { name: "Orange cosmique", hex: "#E67E50", image: "/src/assets/iphone-17-pro-orange.webp" },
-      { name: "Bleu intense", hex: "#3B4B6B", image: "/src/assets/iphone-17-pro-blue.webp" }
+      { name: "Argent", hex: "#E5E5EA", image: "/iphone-17-pro-silver.webp" },
+      { name: "Orange cosmique", hex: "#E67E50", image: "/iphone-17-pro-orange.webp" },
+      { name: "Bleu intense", hex: "#3B4B6B", image: "/iphone-17-pro-blue.webp" }
     ],
     storage: [
       { size: "256 GB", price: 0 },
@@ -118,7 +145,7 @@ export const products: Product[] = [
     name: "iPhone 17 Pro Max",
     fullName: "iPhone 17 Pro Max",
     price: 1479,
-    image: "/src/assets/iphone-17-pro-orange.webp",
+    image: "/iphone-17-pro-orange.webp", // Updated image path
     features: [
       "Écran 6,9\" ProMotion",
       "Autonomie exceptionnelle",
@@ -132,9 +159,9 @@ export const products: Product[] = [
       battery: "Autonomie record"
     },
     colors: [
-      { name: "Argent", hex: "#E5E5EA", image: "/src/assets/iphone-17-pro-silver.webp" },
-      { name: "Orange cosmique", hex: "#E67E50", image: "/src/assets/iphone-17-pro-orange.webp" },
-      { name: "Bleu intense", hex: "#3B4B6B", image: "/src/assets/iphone-17-pro-blue.webp" }
+      { name: "Argent", hex: "#E5E5EA", image: "/iphone-17-pro-silver.webp" },
+      { name: "Orange cosmique", hex: "#E67E50", image: "/iphone-17-pro-orange.webp" },
+      { name: "Bleu intense", hex: "#3B4B6B", image: "/iphone-17-pro-blue.webp" }
     ],
     storage: [
       { size: "256 GB", price: 0 },

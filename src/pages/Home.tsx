@@ -6,8 +6,8 @@ import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/data/products";
 import { Check, Truck, Shield, RefreshCw, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import iphone17Blue from "@/assets/iphone-17-blue.jpg";
-import iphone17Colors from "@/assets/iphone-17-colors copy.webp"; // Updated to use the new colors image
+import iphone17Colors from "@/assets/iphone-17-colors.webp"; // Updated import for the multiple colors image
+import iphoneAirColors from "@/assets/iphone-air-colors.webp"; // New import for iPhone Air multiple colors image
 
 const Home = () => {
   return (

@@ -29,7 +29,7 @@ export const products: Product[] = [
     name: "iPhone 17",
     fullName: "iPhone 17",
     price: 969,
-    image: "/src/assets/iphone-17-colors copy.webp",
+    image: "/src/assets/iphone-17-colors.webp", // Updated to use the correct combined colors image
     features: [
       "Puce A18 nouvelle génération",
       "Double appareil photo 48MP",
@@ -43,11 +43,11 @@ export const products: Product[] = [
       battery: "Jusqu'à 22h de lecture vidéo"
     },
     colors: [
-      { name: "Brume", hex: "#A7B1BF", image: "/src/assets/iphone-17-brume.jpg.webp" },
-      { name: "Lavande", hex: "#D0B8E9", image: "/src/assets/iphone-17-lavender.jpg.webp" },
-      { name: "Noir", hex: "#2B2B2B", image: "/src/assets/iphone-17-black.jpg.webp" },
-      { name: "Blanc", hex: "#F0F0F0", image: "/src/assets/iphone-17-white.jpg.webp" },
-      { name: "Sauge", hex: "#A0D468", image: "/src/assets/iphone-17-sauge.jpg.webp" }
+      { name: "Brume", hex: "#A7B1BF", image: "/src/assets/iphone-17-brume.webp" },
+      { name: "Lavande", hex: "#D0B8E9", image: "/src/assets/iphone-17-lavender.webp" },
+      { name: "Noir", hex: "#2B2B2B", image: "/src/assets/iphone-17-black.webp" },
+      { name: "Blanc", hex: "#F0F0F0", image: "/src/assets/iphone-17-white.webp" },
+      { name: "Sauge", hex: "#A0D468", image: "/src/assets/iphone-17-sauge.webp" }
     ],
     storage: [
       { size: "256 Go", price: 0 },
@@ -59,7 +59,7 @@ export const products: Product[] = [
     name: "iPhone Air",
     fullName: "iPhone Air",
     price: 1229,
-    image: "/src/assets/iphone-air-colors.webp.webp", // Updated image for iPhone Air
+    image: "/src/assets/iphone-air-colors.webp", // Updated image for iPhone Air
     features: [
       "Design ultra-fin 5.5mm",
       "Léger et élégant",
@@ -89,7 +89,7 @@ export const products: Product[] = [
     name: "iPhone 17 Pro",
     fullName: "iPhone 17 Pro",
     price: 1329,
-    image: "/src/assets/iphone-17-pro-orange.webp",
+    image: "/src/assets/iphone-17-pro-orange.webp", // Ensure this path is correct
     features: [
       "Puce A18 Pro",
       "Système caméra Pro Fusion",

@@ -28,39 +28,38 @@ export const products: Product[] = [
     id: "iphone-17",
     name: "iPhone 17",
     fullName: "iPhone 17",
-    price: 899,
-    image: "/src/assets/iphone-17-blue.jpg",
+    price: 969,
+    image: "/src/assets/iphone-17-air-white.jpg", // Using a general white for now, will adjust with specific assets
     features: [
       "Puce A18 nouvelle génération",
       "Double appareil photo 48MP",
-      "Écran Super Retina XDR 6.1\""
+      "Écran Super Retina XDR 6.27\""
     ],
     description: "L'iPhone 17 repousse les limites de la performance avec la nouvelle puce A18, un système photo avancé et un design élégant disponible en cinq magnifiques coloris.",
     specs: {
-      screen: "6.1\" Super Retina XDR",
+      screen: "6.27\" Super Retina XDR",
       chip: "Puce A18",
       camera: "Double 48MP",
       battery: "Jusqu'à 22h de lecture vidéo"
     },
     colors: [
-      { name: "Bleu", hex: "#4A90E2", image: "/src/assets/iphone-17-blue.jpg" },
-      { name: "Rose", hex: "#FFB6C1", image: "/src/assets/iphone-17-blue.jpg" },
-      { name: "Jaune", hex: "#FFD700", image: "/src/assets/iphone-17-blue.jpg" },
-      { name: "Noir", hex: "#1D1D1F", image: "/src/assets/iphone-17-blue.jpg" },
-      { name: "Blanc", hex: "#F5F5F7", image: "/src/assets/iphone-17-blue.jpg" }
+      { name: "Brume", hex: "#A7B1BF", image: "/src/assets/iphone-17-brume.jpg.webp" },
+      { name: "Lavande", hex: "#D0B8E9", image: "/src/assets/iphone-17-lavender.jpg.webp" },
+      { name: "Noir", hex: "#2B2B2B", image: "/src/assets/iphone-17-black.jpg.webp" },
+      { name: "Blanc", hex: "#F0F0F0", image: "/src/assets/iphone-17-white.jpg.webp" },
+      { name: "Sauge", hex: "#A0D468", image: "/src/assets/iphone-17-sauge.jpg.webp" }
     ],
     storage: [
-      { size: "128 GB", price: 0 },
-      { size: "256 GB", price: 100 },
-      { size: "512 GB", price: 300 }
+      { size: "256 Go", price: 0 },
+      { size: "512 Go", price: 250 }
     ]
   },
   {
     id: "iphone-17-air",
-    name: "iPhone 17 Air",
-    fullName: "iPhone 17 Air",
-    price: 799,
-    image: "/src/assets/iphone-17-air-white.jpg",
+    name: "iPhone Air",
+    fullName: "iPhone Air",
+    price: 1229,
+    image: "/src/assets/iphone-air-colors.webp.webp", // Updated image for iPhone Air
     features: [
       "Design ultra-fin 5.5mm",
       "Léger et élégant",
@@ -74,15 +73,15 @@ export const products: Product[] = [
       battery: "Jusqu'à 20h de lecture vidéo"
     },
     colors: [
-      { name: "Bleu", hex: "#4A90E2", image: "/src/assets/iphone-17-air-white.jpg" },
-      { name: "Rose", hex: "#FFB6C1", image: "/src/assets/iphone-17-air-white.jpg" },
-      { name: "Blanc", hex: "#F5F5F7", image: "/src/assets/iphone-17-air-white.jpg" },
-      { name: "Noir", hex: "#1D1D1F", image: "/src/assets/iphone-17-air-white.jpg" }
+      { name: "Bleu ciel", hex: "#B0D9E7", image: "/src/assets/iphone-air-bleu ciel.webp" }, // Based on the first image provided
+      { name: "Blanc nuage", hex: "#E0E0E0", image: "/src/assets/iphone-air-Blanc nuage.webp" }, // Based on the second image provided
+      { name: "Or clair", hex: "#F0E6D2", image: "/src/assets/iphone-air-Or Clair.webp" }, // Based on the third image provided
+      { name: "Noir sidéral", hex: "#303030", image: "/src/assets/iphone-air-Noir sidéral.webp" } // Based on the fourth image provided
     ],
     storage: [
-      { size: "128 GB", price: 0 },
-      { size: "256 GB", price: 100 },
-      { size: "512 GB", price: 300 }
+      { size: "256 Go", price: 0 },
+      { size: "512 Go", price: 250 },
+      { size: "1 To", price: 500 }
     ]
   },
   {

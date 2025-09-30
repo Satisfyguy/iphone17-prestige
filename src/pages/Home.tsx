@@ -7,6 +7,7 @@ import { products } from "@/data/products";
 import { Check, Truck, Shield, RefreshCw, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import iphone17Blue from "@/assets/iphone-17-blue.jpg";
+import iphone17Colors from "@/assets/iphone-17-colors.webp"; // Corrected import for the multiple colors image
 
 const Home = () => {
   return (
@@ -40,7 +41,7 @@ const Home = () => {
             
             <div className="mt-16 animate-fade-in">
               <img 
-                src={iphone17Blue} 
+                src={iphone17Colors} 
                 alt="iPhone 17" 
                 className="w-full max-w-4xl mx-auto rounded-2xl shadow-apple-lg"
               />

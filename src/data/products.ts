@@ -65,7 +65,7 @@ export const products: Product[] = [
       "Léger et élégant",
       "Puce A18 efficace"
     ],
-    description: "Le plus fin des iPhone jamais conçu. L'iPhone 17 Air combine légèreté exceptionnelle et performances puissantes dans un design révolutionnaire de seulement 5.5mm d'épaisseur.",
+    description: "Le plus fin des iPhone jamais conçu. L'iPhone Air combine légèreté exceptionnelle et performances puissantes dans un design révolutionnaire de seulement 5.5mm d'épaisseur.",
     specs: {
       screen: "6.1\" Super Retina XDR",
       chip: "Puce A18",
@@ -73,10 +73,10 @@ export const products: Product[] = [
       battery: "Jusqu'à 20h de lecture vidéo"
     },
     colors: [
-      { name: "Bleu ciel", hex: "#B0D9E7", image: "/src/assets/iphone-air-bleu ciel.webp" }, // Based on the first image provided
-      { name: "Blanc nuage", hex: "#E0E0E0", image: "/src/assets/iphone-air-Blanc nuage.webp" }, // Based on the second image provided
-      { name: "Or clair", hex: "#F0E6D2", image: "/src/assets/iphone-air-Or Clair.webp" }, // Based on the third image provided
-      { name: "Noir sidéral", hex: "#303030", image: "/src/assets/iphone-air-Noir sidéral.webp" } // Based on the fourth image provided
+      { name: "Bleu ciel", hex: "#B0D9E7", image: "/src/assets/iphone-air-bleu-ciel.webp" },
+      { name: "Blanc nuage", hex: "#E0E0E0", image: "/src/assets/iphone-air-Blanc-nuage.webp" },
+      { name: "Or clair", hex: "#F0E6D2", image: "/src/assets/iphone-air-Or-Clair.webp" },
+      { name: "Noir sidéral", hex: "#303030", image: "/src/assets/iphone-air-Noir-sidéral.webp" }
     ],
     storage: [
       { size: "256 Go", price: 0 },

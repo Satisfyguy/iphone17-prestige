@@ -75,7 +75,7 @@ const Product = () => {
               <div>
                 <h1 className="mb-4">{product.fullName}</h1>
                 <p className="text-lg text-muted-foreground mb-6">
-                  {product.description}
+                  {product.description.replace("iPhone 17 Air", "iPhone Air")}
                 </p>
                 <div className="text-4xl font-bold">
                   {totalPrice}€

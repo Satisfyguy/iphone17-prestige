@@ -29,7 +29,7 @@ export const products: Product[] = [
     name: "iPhone 17",
     fullName: "iPhone 17",
     price: 969,
-    image: "/src/assets/iphone-17-air-white.jpg", // Using a general white for now, will adjust with specific assets
+    image: "/src/assets/iphone-17-colors copy.webp",
     features: [
       "Puce A18 nouvelle génération",
       "Double appareil photo 48MP",

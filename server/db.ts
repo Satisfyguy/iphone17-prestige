@@ -47,8 +47,12 @@ export type OrderRow = {
 
 export const Quotes = {
   insert(q: QuoteRow) {
+    const params = {
+      ...q,
+      txHash: q.txHash ?? null,
+    } as const;
     db.prepare(`INSERT INTO quotes (quoteId, amountUSDT, network, address, expiresAt, createdAt, status, txHash)
-      VALUES (@quoteId, @amountUSDT, @network, @address, @expiresAt, @createdAt, @status, @txHash)`).run(q);
+      VALUES (@quoteId, @amountUSDT, @network, @address, @expiresAt, @createdAt, @status, @txHash)`).run(params);
   },
   get(quoteId: string): QuoteRow | undefined {
     return db.prepare(`SELECT * FROM quotes WHERE quoteId = ?`).get(quoteId) as QuoteRow | undefined;

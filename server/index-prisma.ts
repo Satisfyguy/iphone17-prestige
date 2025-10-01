@@ -39,10 +39,13 @@ const authenticateToken = async (req: any, res: any, next: any) => {
     const BASE_URL = RAW_URL.replace(/\/+$/, ""); // trim trailing slashes
     const JWKS_URL = `${BASE_URL}/auth/v1/keys`;
     const jwks = jose.createRemoteJWKSet(new URL(JWKS_URL));
-    const { payload } = await jose.jwtVerify(token, jwks, {
-      issuer: `${BASE_URL}/auth/v1`,
-      audience: process.env.SUPABASE_AUDIENCE || undefined
-    });
+    const { payload } = await jose.jwtVerify(token, jwks);
+    // Optional sanity: ensure token issuer matches project URL
+    const iss = String((payload as any).iss || "");
+    const expectedIss = `${BASE_URL}/auth/v1`;
+    if (!iss.startsWith(expectedIss)) {
+      return res.status(403).json({ error: "Invalid token issuer" });
+    }
 
     // payload.sub is the user id in Supabase
     req.user = { userId: payload.sub, email: payload.email };

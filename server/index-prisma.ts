@@ -124,7 +124,7 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
     const expiresAt = new Date(Date.now() + ttlMs);
     const baseUsdt = amount * rate; // EUR * (USDT per EUR)
     const withSpread = applySpread(baseUsdt, config.quotes.spreadBps ?? 30);
-    const amountUSDT = roundUsdt(withSpread);
+    const amountUSDT = roundUsdt(withSpread); // string for UI; store as numeric in DB
     const quoteId = Math.random().toString(36).slice(2, 10);
     
     // Address per network from env (fallback to mock for dev)
@@ -141,14 +141,14 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
       .insert({
         quote_id: quoteId,
         user_id: req.user.userId,
-        amount_usdt: amountUSDT,
+        amount_usdt: Number(amountUSDT),
         network,
         address,
         expires_at: expiresAt.toISOString(),
         status: 'pending',
         fiat_currency: String(currency).toUpperCase(),
-        fiat_amount: amount.toFixed(2),
-        rate: rate.toString(),
+        fiat_amount: Number(amount.toFixed(2)),
+        rate: Number(rate),
         rate_provider: provider,
         rate_at: new Date().toISOString()
       });
@@ -162,7 +162,7 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
         user_id: req.user.userId,
         network,
         address,
-        expected_amount: amountUSDT,
+        expected_amount: Number(amountUSDT),
         status: 'pending',
         provider: 'manual'
       });
@@ -329,7 +329,7 @@ app.post("/api/orders", authenticateToken, async (req: any, res) => {
         quote_id: quoteId,
         user_id: req.user.userId,
         status: 'created',
-        total_usdt: quote.amount_usdt
+        total_usdt: Number(quote.amount_usdt)
       })
       .select('*')
       .single();

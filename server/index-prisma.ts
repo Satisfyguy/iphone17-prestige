@@ -369,7 +369,13 @@ app.get("/api/orders", authenticateToken, async (req: any, res) => {
 // Health endpoint
 app.get("/api/health", (_, res) => res.json({ ok: true }));
 
-const port = process.env.PORT || 5175;
-app.listen(port, () => {
-  console.log(`USDT API with Prisma listening on http://localhost:${port}`);
-});
+// Export app for serverless (Vercel)
+export default app;
+
+// Local dev server only
+if (!process.env.VERCEL) {
+  const port = process.env.PORT || 5175;
+  app.listen(port, () => {
+    console.log(`USDT API listening on http://localhost:${port}`);
+  });
+}

@@ -77,6 +77,33 @@ app.get("/api/auth/profile", authenticateToken, async (req: any, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+// Mirror without /api prefix (for serverless path forwarding)
+app.get("/auth/profile", authenticateToken, async (req: any, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .select('id,email,first_name,last_name,phone,address,city,country,created_at')
+      .eq('id', (req as any).user.userId)
+      .single();
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: "User not found" });
+    const user = {
+      id: data.id,
+      email: data.email,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      country: data.country,
+      createdAt: data.created_at
+    };
+    res.json({ user });
+  } catch (error) {
+    console.error("Profile error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // Update user profile (public.profiles)
 app.put("/api/auth/profile", authenticateToken, async (req: any, res) => {
@@ -109,6 +136,32 @@ app.put("/api/auth/profile", authenticateToken, async (req: any, res) => {
       country: data.country
     };
 
+    res.json({ user });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.put("/auth/profile", authenticateToken, async (req: any, res) => {
+  try {
+    const { firstName, lastName, phone, address, city, country } = req.body;
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .update({ first_name: firstName, last_name: lastName, phone, address, city, country })
+      .eq('id', (req as any).user.userId)
+      .select('id,email,first_name,last_name,phone,address,city,country')
+      .single();
+    if (error) throw error;
+    const user = {
+      id: data.id,
+      email: data.email,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      country: data.country
+    };
     res.json({ user });
   } catch (error) {
     console.error("Update profile error:", error);
@@ -192,6 +245,71 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+// Mirror without /api prefix
+app.post("/payment/quote", authenticateToken, async (req: any, res) => {
+  try {
+    const { currency, amount, network } = req.body || {};
+    if (!currency || typeof amount !== "number" || !network) {
+      return res.status(400).json({ error: "invalid_body" });
+    }
+    const { rate, provider } = await getEurToUsdtRate();
+    const ttlMs = (config.quotes.ttlSeconds ?? 900) * 1000;
+    const expiresAt = new Date(Date.now() + ttlMs);
+    const baseUsdt = amount * rate;
+    const withSpread = applySpread(baseUsdt, config.quotes.spreadBps ?? 30);
+    const amountUSDT = roundUsdt(withSpread);
+    const quoteId = Math.random().toString(36).slice(2, 10);
+    const addressByNet: Record<string, string> = {
+      "TRC-20": process.env.WALLET_TRC20 || "TXMockTronAddr9999999999999999999999",
+      "ERC-20": process.env.WALLET_ERC20 || "0xMockEthereumAddress0000000000000000",
+      "BEP-20": process.env.WALLET_BEP20 || "0xMockBscAddress00000000000000000000",
+    };
+    const address = addressByNet[network] || addressByNet["TRC-20"];
+    const { error: qErr } = await supabaseAdmin
+      .from('quotes')
+      .insert({
+        quote_id: quoteId,
+        user_id: (req as any).user.userId,
+        amount_usdt: Number(amountUSDT),
+        network,
+        address,
+        expires_at: expiresAt.toISOString(),
+        status: 'pending',
+        fiat_currency: String(currency).toUpperCase(),
+        fiat_amount: Number(amount.toFixed(2)),
+        rate: Number(rate),
+        rate_provider: provider,
+        rate_at: new Date().toISOString()
+      });
+    if (qErr) throw qErr;
+    const { error: pErr } = await supabaseAdmin
+      .from('payments')
+      .insert({
+        quote_id: quoteId,
+        user_id: (req as any).user.userId,
+        network,
+        address,
+        expected_amount: Number(amountUSDT),
+        status: 'pending',
+        provider: 'manual'
+      });
+    if (pErr) throw pErr;
+    res.json({ 
+      quoteId,
+      amountUSDT,
+      network,
+      address,
+      expiresAt: expiresAt.toISOString(),
+      rate,
+      rateProvider: provider,
+      fiatCurrency: String(currency).toUpperCase(),
+      fiatAmount: Number(amount.toFixed(2))
+    });
+  } catch (error) {
+    console.error("Quote creation error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // Get payment status
 app.get("/api/payment/status/:quoteId", authenticateToken, async (req: any, res) => {
@@ -225,6 +343,38 @@ app.get("/api/payment/status/:quoteId", authenticateToken, async (req: any, res)
       return res.json({ status: quote.status, confirmations: 1, txHash: quote.tx_hash });
     }
     
+    return res.json({ status: quote.status });
+  } catch (error) {
+    console.error("Status check error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.get("/payment/status/:quoteId", authenticateToken, async (req: any, res) => {
+  try {
+    const { quoteId } = req.params;
+    const { data: quote, error } = await supabaseAdmin
+      .from('quotes')
+      .select('*')
+      .eq('quote_id', quoteId)
+      .eq('user_id', (req as any).user.userId)
+      .single();
+    if (error) throw error;
+    if (!quote) return res.status(404).json({ error: "not_found" });
+    const now = new Date();
+    if (now >= new Date(quote.expires_at)) {
+      const { error: uErr } = await supabaseAdmin
+        .from('quotes')
+        .update({ status: 'expired' })
+        .eq('quote_id', quoteId);
+      if (uErr) throw uErr;
+      return res.json({ status: "expired" });
+    }
+    if (quote.status === "submitted") {
+      return res.json({ status: quote.status, txHash: quote.tx_hash });
+    }
+    if (quote.status === "confirmed") {
+      return res.json({ status: quote.status, confirmations: 1, txHash: quote.tx_hash });
+    }
     return res.json({ status: quote.status });
   } catch (error) {
     console.error("Status check error:", error);
@@ -270,6 +420,38 @@ app.post("/api/payment/submit-tx", authenticateToken, async (req: any, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+app.post("/payment/submit-tx", authenticateToken, async (req: any, res) => {
+  try {
+    const { quoteId, txHash } = req.body || {};
+    if (!quoteId || !txHash || typeof txHash !== "string") {
+      return res.status(400).json({ error: "invalid_body" });
+    }
+    const { data: quote, error } = await supabaseAdmin
+      .from('quotes')
+      .select('*')
+      .eq('quote_id', quoteId)
+      .eq('user_id', (req as any).user.userId)
+      .single();
+    if (error) throw error;
+    if (!quote) return res.status(404).json({ error: "quote_not_found" });
+    const now = new Date();
+    if (now >= new Date(quote.expires_at)) return res.status(400).json({ error: "expired" });
+    const { error: uq } = await supabaseAdmin
+      .from('quotes')
+      .update({ tx_hash: txHash, status: 'submitted' })
+      .eq('quote_id', quoteId);
+    if (uq) throw uq;
+    const { error: up } = await supabaseAdmin
+      .from('payments')
+      .update({ tx_hash: txHash, status: 'submitted' })
+      .eq('quote_id', quoteId);
+    if (up) throw up;
+    return res.json({ ok: true, status: "submitted", txHash });
+  } catch (error) {
+    console.error("Submit tx error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // Admin confirmation endpoint
 app.post("/api/payment/admin/confirm", async (req, res) => {
@@ -298,6 +480,40 @@ app.post("/api/payment/admin/confirm", async (req, res) => {
       .eq('quote_id', quoteId);
     if (up) throw up;
 
+    const { data: updated, error: ue } = await supabaseAdmin
+      .from('quotes')
+      .select('status,tx_hash')
+      .eq('quote_id', quoteId)
+      .single();
+    if (ue) throw ue;
+    return res.json({ ok: true, status: updated?.status, txHash: updated?.tx_hash });
+  } catch (error) {
+    console.error("Admin confirm error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.post("/payment/admin/confirm", async (req, res) => {
+  try {
+    const { token, quoteId } = req.body || {};
+    if (!token || token !== ADMIN_TOKEN) return res.status(401).json({ error: "unauthorized" });
+    if (!quoteId) return res.status(400).json({ error: "invalid_body" });
+    const { data: quote, error } = await supabaseAdmin
+      .from('quotes')
+      .select('*')
+      .eq('quote_id', quoteId)
+      .single();
+    if (error) throw error;
+    if (!quote) return res.status(404).json({ error: "quote_not_found" });
+    const { error: uq } = await supabaseAdmin
+      .from('quotes')
+      .update({ status: 'confirmed' })
+      .eq('quote_id', quoteId);
+    if (uq) throw uq;
+    const { error: up } = await supabaseAdmin
+      .from('payments')
+      .update({ status: 'confirmed' })
+      .eq('quote_id', quoteId);
+    if (up) throw up;
     const { data: updated, error: ue } = await supabaseAdmin
       .from('quotes')
       .select('status,tx_hash')
@@ -376,6 +592,7 @@ app.get("/api/orders", authenticateToken, async (req: any, res) => {
 
 // Health endpoint
 app.get("/api/health", (_, res) => res.json({ ok: true }));
+app.get("/health", (_, res) => res.json({ ok: true }));
 
 // Export app for serverless (Vercel)
 export default app;

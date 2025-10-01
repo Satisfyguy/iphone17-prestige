@@ -9,6 +9,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Allow routes to work both with and without the "/api" prefix (Vercel catch-all)
+app.use((req, _res, next) => {
+  if (!req.url.startsWith('/api/')) {
+    req.url = req.url.startsWith('/') ? `/api${req.url}` : `/api/${req.url}`;
+  }
+  next();
+});
+
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "dev_admin_token";
 
 type StoredQuoteStatus = "pending" | "submitted" | "confirmed" | "expired";

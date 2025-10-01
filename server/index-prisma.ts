@@ -1,162 +1,67 @@
 import express from "express";
 import cors from "cors";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { prisma } from "./prisma";
+import * as jose from "jose";
 import { config } from "./config";
 import { getEurToUsdtRate, applySpread, roundUsdt } from "./rates";
+import { supabaseAdmin } from "./supabase";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "dev_admin_token";
 
 type StoredQuoteStatus = "pending" | "submitted" | "confirmed" | "expired";
 
-// Middleware d'authentification
-const authenticateToken = (req: any, res: any, next: any) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+// Middleware d'authentification (Supabase JWT via JWKS)
+const authenticateToken = async (req: any, res: any, next: any) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: "Access token required" });
 
-  if (!token) {
-    return res.status(401).json({ error: "Access token required" });
+    const JWKS_URL = `${process.env.SUPABASE_URL || "https://rhigaegceftzmyxivfph.supabase.co"}/auth/v1/keys`;
+    const jwks = jose.createRemoteJWKSet(new URL(JWKS_URL));
+    const { payload } = await jose.jwtVerify(token, jwks, {
+      issuer: `${process.env.SUPABASE_URL || "https://rhigaegceftzmyxivfph.supabase.co"}/auth/v1`,
+      audience: process.env.SUPABASE_AUDIENCE || undefined
+    });
+
+    // payload.sub is the user id in Supabase
+    req.user = { userId: payload.sub, email: payload.email };
+    return next();
+  } catch (err) {
+    return res.status(403).json({ error: "Invalid token" });
   }
-
-  jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) return res.status(403).json({ error: "Invalid token" });
-    req.user = user;
-    next();
-  });
 };
 
-// ===== AUTHENTICATION ENDPOINTS =====
+// ===== AUTHENTICATION ENDPOINTS (managed by Supabase) =====
 
-// Register
-app.post("/api/auth/register", async (req, res) => {
-  try {
-    const { email, password, firstName, lastName, phone } = req.body;
-    
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password required" });
-    }
-
-    // Vérifier si l'utilisateur existe déjà
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
-
-    if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
-    }
-
-    // Hasher le mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Créer l'utilisateur
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        phone
-      }
-    });
-
-    // Générer le token JWT
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phone: user.phone
-      }
-    });
-  } catch (error) {
-    console.error("Register error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Login
-app.post("/api/auth/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password required" });
-    }
-
-    // Trouver l'utilisateur
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
-
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Vérifier le mot de passe
-    const validPassword = await bcrypt.compare(password, user.password);
-
-    if (!validPassword) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Générer le token JWT
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phone: user.phone
-      }
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Get user profile
+// Get user profile (from public.profiles)
 app.get("/api/auth/profile", authenticateToken, async (req: any, res) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.userId },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        address: true,
-        city: true,
-        country: true,
-        createdAt: true
-      }
-    });
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .select('id,email,first_name,last_name,phone,address,city,country,created_at')
+      .eq('id', req.user.userId)
+      .single();
+    if (error) throw error;
 
-    if (!user) {
+    if (!data) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    const user = {
+      id: data.id,
+      email: data.email,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      country: data.country,
+      createdAt: data.created_at
+    };
 
     res.json({ user });
   } catch (error) {
@@ -165,32 +70,36 @@ app.get("/api/auth/profile", authenticateToken, async (req: any, res) => {
   }
 });
 
-// Update user profile
+// Update user profile (public.profiles)
 app.put("/api/auth/profile", authenticateToken, async (req: any, res) => {
   try {
     const { firstName, lastName, phone, address, city, country } = req.body;
 
-    const user = await prisma.user.update({
-      where: { id: req.user.userId },
-      data: {
-        firstName,
-        lastName,
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        first_name: firstName,
+        last_name: lastName,
         phone,
         address,
         city,
         country
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        address: true,
-        city: true,
-        country: true
-      }
-    });
+      })
+      .eq('id', req.user.userId)
+      .select('id,email,first_name,last_name,phone,address,city,country')
+      .single();
+    if (error) throw error;
+
+    const user = {
+      id: data.id,
+      email: data.email,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      country: data.country
+    };
 
     res.json({ user });
   } catch (error) {
@@ -226,43 +135,45 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
     };
     const address = addressByNet[network] || addressByNet["TRC-20"];
 
-    // Créer la quote avec l'utilisateur
-    const quote = await prisma.quote.create({
-      data: {
-        quoteId,
-        amountUSDT,
+    // Créer la quote avec l'utilisateur (public.quotes)
+    const { error: qErr } = await supabaseAdmin
+      .from('quotes')
+      .insert({
+        quote_id: quoteId,
+        user_id: req.user.userId,
+        amount_usdt: amountUSDT,
         network,
         address,
-        expiresAt,
-        status: "pending",
-        userId: req.user.userId,
-        fiatCurrency: String(currency).toUpperCase(),
-        fiatAmount: amount.toFixed(2),
+        expires_at: expiresAt.toISOString(),
+        status: 'pending',
+        fiat_currency: String(currency).toUpperCase(),
+        fiat_amount: amount.toFixed(2),
         rate: rate.toString(),
-        rateProvider: provider,
-        rateAt: new Date()
-      }
-    });
+        rate_provider: provider,
+        rate_at: new Date().toISOString()
+      });
+    if (qErr) throw qErr;
 
     // Créer le Payment associé (manuel)
-    await prisma.payment.create({
-      data: {
-        quoteId: quote.quoteId,
-        userId: req.user.userId,
+    const { error: pErr } = await supabaseAdmin
+      .from('payments')
+      .insert({
+        quote_id: quoteId,
+        user_id: req.user.userId,
         network,
         address,
-        expectedAmount: amountUSDT,
-        status: "pending",
-        provider: "manual"
-      }
-    });
+        expected_amount: amountUSDT,
+        status: 'pending',
+        provider: 'manual'
+      });
+    if (pErr) throw pErr;
 
     res.json({ 
       quoteId, 
       amountUSDT, 
       network, 
       address, 
-      expiresAt: quote.expiresAt.toISOString(),
+      expiresAt: expiresAt.toISOString(),
       rate,
       rateProvider: provider,
       fiatCurrency: String(currency).toUpperCase(),
@@ -279,29 +190,31 @@ app.get("/api/payment/status/:quoteId", authenticateToken, async (req: any, res)
   try {
     const { quoteId } = req.params;
     
-    const quote = await prisma.quote.findFirst({
-      where: {
-        quoteId,
-        userId: req.user.userId // Vérifier que la quote appartient à l'utilisateur
-      }
-    });
+    const { data: quote, error } = await supabaseAdmin
+      .from('quotes')
+      .select('*')
+      .eq('quote_id', quoteId)
+      .eq('user_id', req.user.userId)
+      .single();
+    if (error) throw error;
 
     if (!quote) return res.status(404).json({ error: "not_found" });
 
     const now = new Date();
-    if (now >= quote.expiresAt) {
-      await prisma.quote.update({
-        where: { quoteId },
-        data: { status: "expired" }
-      });
+    if (now >= new Date(quote.expires_at)) {
+      const { error: uErr } = await supabaseAdmin
+        .from('quotes')
+        .update({ status: 'expired' })
+        .eq('quote_id', quoteId);
+      if (uErr) throw uErr;
       return res.json({ status: "expired" });
     }
 
     if (quote.status === "submitted") {
-      return res.json({ status: quote.status, txHash: quote.txHash });
+      return res.json({ status: quote.status, txHash: quote.tx_hash });
     }
     if (quote.status === "confirmed") {
-      return res.json({ status: quote.status, confirmations: 1, txHash: quote.txHash });
+      return res.json({ status: quote.status, confirmations: 1, txHash: quote.tx_hash });
     }
     
     return res.json({ status: quote.status });
@@ -319,28 +232,29 @@ app.post("/api/payment/submit-tx", authenticateToken, async (req: any, res) => {
       return res.status(400).json({ error: "invalid_body" });
     }
 
-    const quote = await prisma.quote.findFirst({
-      where: {
-        quoteId,
-        userId: req.user.userId
-      }
-    });
+    const { data: quote, error } = await supabaseAdmin
+      .from('quotes')
+      .select('*')
+      .eq('quote_id', quoteId)
+      .eq('user_id', req.user.userId)
+      .single();
+    if (error) throw error;
 
     if (!quote) return res.status(404).json({ error: "quote_not_found" });
 
     const now = new Date();
-    if (now >= quote.expiresAt) return res.status(400).json({ error: "expired" });
+    if (now >= new Date(quote.expires_at)) return res.status(400).json({ error: "expired" });
 
-    await prisma.$transaction([
-      prisma.quote.update({
-        where: { quoteId },
-        data: { txHash, status: "submitted" }
-      }),
-      prisma.payment.update({
-        where: { quoteId },
-        data: { txHash, status: "submitted" }
-      })
-    ]);
+    const { error: uq } = await supabaseAdmin
+      .from('quotes')
+      .update({ tx_hash: txHash, status: 'submitted' })
+      .eq('quote_id', quoteId);
+    if (uq) throw uq;
+    const { error: up } = await supabaseAdmin
+      .from('payments')
+      .update({ tx_hash: txHash, status: 'submitted' })
+      .eq('quote_id', quoteId);
+    if (up) throw up;
 
     return res.json({ ok: true, status: "submitted", txHash });
   } catch (error) {
@@ -356,25 +270,33 @@ app.post("/api/payment/admin/confirm", async (req, res) => {
     if (!token || token !== ADMIN_TOKEN) return res.status(401).json({ error: "unauthorized" });
     if (!quoteId) return res.status(400).json({ error: "invalid_body" });
 
-    const quote = await prisma.quote.findUnique({
-      where: { quoteId }
-    });
+    const { data: quote, error } = await supabaseAdmin
+      .from('quotes')
+      .select('*')
+      .eq('quote_id', quoteId)
+      .single();
+    if (error) throw error;
 
     if (!quote) return res.status(404).json({ error: "quote_not_found" });
 
-    await prisma.$transaction([
-      prisma.quote.update({
-        where: { quoteId },
-        data: { status: "confirmed" }
-      }),
-      prisma.payment.update({
-        where: { quoteId },
-        data: { status: "confirmed" }
-      })
-    ]);
+    const { error: uq } = await supabaseAdmin
+      .from('quotes')
+      .update({ status: 'confirmed' })
+      .eq('quote_id', quoteId);
+    if (uq) throw uq;
+    const { error: up } = await supabaseAdmin
+      .from('payments')
+      .update({ status: 'confirmed' })
+      .eq('quote_id', quoteId);
+    if (up) throw up;
 
-    const updated = await prisma.quote.findUnique({ where: { quoteId } });
-    return res.json({ ok: true, status: updated?.status, txHash: updated?.txHash });
+    const { data: updated, error: ue } = await supabaseAdmin
+      .from('quotes')
+      .select('status,tx_hash')
+      .eq('quote_id', quoteId)
+      .single();
+    if (ue) throw ue;
+    return res.json({ ok: true, status: updated?.status, txHash: updated?.tx_hash });
   } catch (error) {
     console.error("Admin confirm error:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -387,33 +309,38 @@ app.post("/api/orders", authenticateToken, async (req: any, res) => {
     const { quoteId } = req.body || {};
     if (!quoteId) return res.status(400).json({ error: "invalid_body" });
 
-    const quote = await prisma.quote.findFirst({
-      where: {
-        quoteId,
-        userId: req.user.userId
-      }
-    });
+    const { data: quote, error } = await supabaseAdmin
+      .from('quotes')
+      .select('*')
+      .eq('quote_id', quoteId)
+      .eq('user_id', req.user.userId)
+      .single();
+    if (error) throw error;
 
     if (!quote) return res.status(404).json({ error: "quote_not_found" });
     if (quote.status !== "confirmed") return res.status(400).json({ error: "not_confirmed" });
 
     const orderId = "ord_" + Math.random().toString(36).slice(2, 10);
     
-    const order = await prisma.order.create({
-      data: {
-        orderId,
-        quoteId,
-        userId: req.user.userId,
-        status: "created",
-        totalUSDT: quote.amountUSDT
-      }
-    });
+    const { data: order, error: oErr } = await supabaseAdmin
+      .from('orders')
+      .insert({
+        order_id: orderId,
+        quote_id: quoteId,
+        user_id: req.user.userId,
+        status: 'created',
+        total_usdt: quote.amount_usdt
+      })
+      .select('*')
+      .single();
+    if (oErr) throw oErr;
 
     // Lier le payment à la commande
-    await prisma.payment.update({
-      where: { quoteId },
-      data: { orderId }
-    });
+    const { error: up } = await supabaseAdmin
+      .from('payments')
+      .update({ order_id: orderId })
+      .eq('quote_id', quoteId);
+    if (up) throw up;
 
     res.json(order);
   } catch (error) {
@@ -425,13 +352,12 @@ app.post("/api/orders", authenticateToken, async (req: any, res) => {
 // Get user orders
 app.get("/api/orders", authenticateToken, async (req: any, res) => {
   try {
-    const orders = await prisma.order.findMany({
-      where: { userId: req.user.userId },
-      include: {
-        quote: true
-      },
-      orderBy: { createdAt: 'desc' }
-    });
+    const { data: orders, error } = await supabaseAdmin
+      .from('orders')
+      .select('order_id,quote_id,status,total_usdt,created_at')
+      .eq('user_id', req.user.userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
 
     res.json({ orders });
   } catch (error) {

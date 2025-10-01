@@ -5,19 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "tsx server/index.ts",
-    "dev:server-prisma": "tsx server/index-prisma.ts",
+    "dev:server": "tsx server/index-prisma.ts",
     "dev:all": "run-p dev:server dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev --name init"
+    "prisma:generate": "echo prisma removed",
+    "prisma:migrate": "echo prisma removed"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "@prisma/client": "^6.16.3",
+    
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-aspect-ratio": "^1.1.7",
@@ -58,6 +57,7 @@
     "express": "^5.1.0",
     "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.2",
+    "jose": "^5.9.6",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "node-fetch": "^3.3.2",
@@ -95,7 +95,7 @@
     "lovable-tagger": "^1.1.10",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.5.6",
-    "prisma": "^6.16.3",
+    "prisma": "0.0.0-removed",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.2",
     "typescript": "^5.8.3",

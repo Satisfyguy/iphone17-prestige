@@ -4,12 +4,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { Link, useNavigate } from "react-router-dom";
-import { apiFetch, getToken } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useMemo, useState } from "react";
 import * as QRCode from "qrcode";
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const { session } = useAuth();
   const { items, total } = useCart();
   const [network, setNetwork] = useState<string>("TRC-20");
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
@@ -44,7 +46,7 @@ const Checkout = () => {
   const eurTotal = useMemo(() => total, [total]);
 
   const requestQuote = async () => {
-    if (!getToken()) {
+    if (!session) {
       return navigate('/login');
     }
     setIsRequesting(true);

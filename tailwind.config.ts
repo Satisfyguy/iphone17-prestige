@@ -90,6 +90,10 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        "gradient": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -99,6 +103,7 @@ export default {
         "scale-in": "scale-in 0.3s ease-out",
         "slide-in": "slide-in 0.4s ease-out",
         "float": "float 3s ease-in-out infinite",
+        "gradient": "gradient 3s ease-in-out infinite",
       },
     },
   },

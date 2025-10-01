@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import * as jose from "jose";
-import { config } from "./config";
-import { getEurToUsdtRate, applySpread, roundUsdt } from "./rates";
-import { supabaseAdmin } from "./supabase";
+import { config } from "./config.js";
+import { getEurToUsdtRate, applySpread, roundUsdt } from "./rates.js";
+import { supabaseAdmin } from "./supabase.js";
 
 const app = express();
 app.use(cors());

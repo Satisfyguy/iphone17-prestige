@@ -16,13 +16,13 @@ Ce document liste les tâches principales et secondaires (style task manager) po
   - [x] Lien "Commander" depuis `Panier` vers `Checkout`
   - [ ] Sauvegarde brouillon de checkout dans `localStorage` (UX)
 
-- [ ] Intégration Paiement USDT (P0)
+- [~] Intégration Paiement USDT (P0)
   - [ ] Choisir la solution: custodial (Coinbase Commerce, Circle, Binance Pay, NOWPayments, BitPay, Triple-A) vs self-custody (BTCPay Server mod, wallet maison)
-  - [~] Définir réseaux acceptés: ERC-20 (Ethereum), TRC-20 (Tron), BEP-20 (BSC) — par défaut TRC-20 pour frais bas
+  - [x] Définir réseaux acceptés: ERC-20 (Ethereum), TRC-20 (Tron), BEP-20 (BSC) — par défaut TRC-20 pour frais bas
   - [x] Backend: endpoint `POST /api/payment/quote` — crée un devis/checkout avec montant USDT, réseau, timeout (ex: 15 min), adresse de réception unique et mémo si requis
   - [~] Front: page de paiement crypto (adresse, réseau, montant exact; QR/timer à ajouter)
   - [ ] Confirmations blockchain: configurable (ex: 1 conf TRC-20 / 6 conf ERC-20) + gestion pending/confirmé/échoué
-  - [x] Webhooks/callbacks fournisseur OU watcher on-chain (si self-custody) pour notifier le backend (stub status/poll)
+  - [x] Polling du statut + endpoints `submit-tx` et `admin/confirm` (mock)
   - [ ] Gestion des écarts: sous‑paiement, sur‑paiement, réseau incorrect, double spend, expiré — règles business (complément, remboursement, avoir)
   - [ ] Réconciliation et idempotence: associer tx hash ↔ commande, éviter double comptabilisation
   - [ ] Sécurité/ops: rotation des clés/API, adresse par commande, pas de réutilisation d’adresse, logs détaillés
@@ -32,14 +32,15 @@ Ce document liste les tâches principales et secondaires (style task manager) po
   - [ ] Polling automatique du statut jusqu’à confirmation/expiration (pas uniquement bouton)
   - [ ] Désactiver modification du panier une fois un devis actif (ou invalider le devis si modification)
   - [ ] Persistance `quotes` et statuts de paiement en base de données (remplacer `Map` mémoire)
+ - [x] Persistance `quotes` et statuts de paiement en base de données (Prisma)
   - [ ] Vérification signature des webhooks + politique de retry (exponentiel) + journaux
 
 - [ ] Création/Validation de Commande (P0)
-  - [ ] Backend: `POST /api/orders` (valide panier, calcule TVA/frais, réserve stock)
+- [x] Backend: `POST /api/orders` (minimal, après confirmation paiement)
   - [ ] Modèle commande (id, lignes, montants, client, statut, paiements, réseau, tx hash, confirmations)
   - [ ] Idempotence sur création de commande (clé idempotency)
   - [ ] Email de confirmation (Resend/SendGrid) + facture PDF (facultatif P1)
-  - [ ] Persistance `orders` en base + liaison forte `order ↔ quote ↔ tx`
+- [x] Persistance `orders` en base + liaison `order ↔ quote`
   - [ ] Page de succès (récap complet, lien explorer, justificatif PDF si dispo)
 
 - [ ] Gestion Stock/Produits (P0)
@@ -71,13 +72,13 @@ Dépendances: Paiement USDT dépend du backend minimal et du fournisseur ou watc
 
 ## P1 — Authentification, Compte client, Adresses
 
-- [ ] Auth (P1)
-  - [ ] Inscription/Connexion (email + mot de passe ou OAuth)
+- [x] Auth (P1)
+  - [x] Inscription/Connexion (email + mot de passe)
   - [ ] Reset mot de passe (email)
   - [ ] Sécurisation routes (historique commandes)
 
-- [ ] Espace client (P1)
-  - [ ] Historique commandes + détails
+- [~] Espace client (P1)
+  - [~] Historique commandes + détails (endpoint `GET /api/orders`)
   - [ ] Carnet d'adresses (facturation/livraison)
   - [ ] Reçus/factures téléchargeables
 

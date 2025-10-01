@@ -1,12 +1,21 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getToken } from "@/lib/api";
 import { useCart } from "@/hooks/useCart";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { count } = useCart();
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoggedIn(!!getToken());
+    const onStorage = () => setLoggedIn(!!getToken());
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -32,6 +41,17 @@ export const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-4 relative">
+            {loggedIn ? (
+              <>
+                <Link to="/checkout" className="text-sm font-medium transition-smooth hover:text-primary">Payer</Link>
+                <button className="text-sm text-muted-foreground hover:text-destructive" onClick={() => { try { localStorage.removeItem('auth_token'); setLoggedIn(false);} catch {} }}>Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-sm font-medium transition-smooth hover:text-primary">Login</Link>
+                <Link to="/register" className="text-sm font-medium transition-smooth hover:text-primary">Register</Link>
+              </>
+            )}
             <Link to="/panier" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />

@@ -3,6 +3,8 @@ import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "./prisma";
+import { config } from "./config";
+import { getEurToUsdtRate, applySpread, roundUsdt } from "./rates";
 
 const app = express();
 app.use(cors());
@@ -207,10 +209,14 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
       return res.status(400).json({ error: "invalid_body" });
     }
 
-    // Mock conversion: 1 USDT = 1 EUR for dev; lock 15 minutes
-    const amountUSDT = amount.toFixed(2);
+    // Get real-time EUR->USDT rate, apply spread and rounding
+    const { rate, provider } = await getEurToUsdtRate();
+    const ttlMs = (config.quotes.ttlSeconds ?? 900) * 1000;
+    const expiresAt = new Date(Date.now() + ttlMs);
+    const baseUsdt = amount * rate; // EUR * (USDT per EUR)
+    const withSpread = applySpread(baseUsdt, config.quotes.spreadBps ?? 30);
+    const amountUSDT = roundUsdt(withSpread);
     const quoteId = Math.random().toString(36).slice(2, 10);
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
     
     // Address per network from env (fallback to mock for dev)
     const addressByNet: Record<string, string> = {
@@ -229,7 +235,25 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
         address,
         expiresAt,
         status: "pending",
-        userId: req.user.userId
+        userId: req.user.userId,
+        fiatCurrency: String(currency).toUpperCase(),
+        fiatAmount: amount.toFixed(2),
+        rate: rate.toString(),
+        rateProvider: provider,
+        rateAt: new Date()
+      }
+    });
+
+    // Créer le Payment associé (manuel)
+    await prisma.payment.create({
+      data: {
+        quoteId: quote.quoteId,
+        userId: req.user.userId,
+        network,
+        address,
+        expectedAmount: amountUSDT,
+        status: "pending",
+        provider: "manual"
       }
     });
 
@@ -238,7 +262,11 @@ app.post("/api/payment/quote", authenticateToken, async (req: any, res) => {
       amountUSDT, 
       network, 
       address, 
-      expiresAt: quote.expiresAt.toISOString() 
+      expiresAt: quote.expiresAt.toISOString(),
+      rate,
+      rateProvider: provider,
+      fiatCurrency: String(currency).toUpperCase(),
+      fiatAmount: Number(amount.toFixed(2))
     });
   } catch (error) {
     console.error("Quote creation error:", error);
@@ -303,10 +331,16 @@ app.post("/api/payment/submit-tx", authenticateToken, async (req: any, res) => {
     const now = new Date();
     if (now >= quote.expiresAt) return res.status(400).json({ error: "expired" });
 
-    await prisma.quote.update({
-      where: { quoteId },
-      data: { txHash, status: "submitted" }
-    });
+    await prisma.$transaction([
+      prisma.quote.update({
+        where: { quoteId },
+        data: { txHash, status: "submitted" }
+      }),
+      prisma.payment.update({
+        where: { quoteId },
+        data: { txHash, status: "submitted" }
+      })
+    ]);
 
     return res.json({ ok: true, status: "submitted", txHash });
   } catch (error) {
@@ -328,15 +362,18 @@ app.post("/api/payment/admin/confirm", async (req, res) => {
 
     if (!quote) return res.status(404).json({ error: "quote_not_found" });
 
-    await prisma.quote.update({
-      where: { quoteId },
-      data: { status: "confirmed" }
-    });
+    await prisma.$transaction([
+      prisma.quote.update({
+        where: { quoteId },
+        data: { status: "confirmed" }
+      }),
+      prisma.payment.update({
+        where: { quoteId },
+        data: { status: "confirmed" }
+      })
+    ]);
 
-    const updated = await prisma.quote.findUnique({
-      where: { quoteId }
-    });
-
+    const updated = await prisma.quote.findUnique({ where: { quoteId } });
     return res.json({ ok: true, status: updated?.status, txHash: updated?.txHash });
   } catch (error) {
     console.error("Admin confirm error:", error);
@@ -370,6 +407,12 @@ app.post("/api/orders", authenticateToken, async (req: any, res) => {
         status: "created",
         totalUSDT: quote.amountUSDT
       }
+    });
+
+    // Lier le payment à la commande
+    await prisma.payment.update({
+      where: { quoteId },
+      data: { orderId }
     });
 
     res.json(order);

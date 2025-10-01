@@ -14,6 +14,8 @@ import NotFound from "./pages/NotFound";
 import { CartProvider } from "@/hooks/useCart";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/comparateur" element={<Comparateur />} />
             <Route path="/panier" element={<Panier />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/success" element={<Success />} />
             <Route path="/accessoires" element={<Accessoires />} />
             <Route path="/support" element={<Support />} />

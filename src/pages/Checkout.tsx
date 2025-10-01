@@ -3,11 +3,13 @@ import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { apiFetch, getToken } from "@/lib/api";
 import { useEffect, useMemo, useState } from "react";
 import * as QRCode from "qrcode";
 
 const Checkout = () => {
+  const navigate = useNavigate();
   const { items, total } = useCart();
   const [network, setNetwork] = useState<string>("TRC-20");
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
@@ -42,11 +44,13 @@ const Checkout = () => {
   const eurTotal = useMemo(() => total, [total]);
 
   const requestQuote = async () => {
+    if (!getToken()) {
+      return navigate('/login');
+    }
     setIsRequesting(true);
     try {
-      const res = await fetch("/api/payment/quote", {
+      const res = await apiFetch("/api/payment/quote", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           currency: "EUR",
           amount: eurTotal,
@@ -85,7 +89,7 @@ const Checkout = () => {
   const pollStatus = async () => {
     if (!quote) return;
     try {
-      const res = await fetch(`/api/payment/status/${quote.quoteId}`);
+      const res = await apiFetch(`/api/payment/status/${quote.quoteId}`);
       if (!res.ok) throw new Error("status failed");
       const data = await res.json();
       const mapped = { state: data.status as string, confirmations: data.confirmations as number | undefined, txHash: data.txHash as string | undefined };
@@ -100,9 +104,8 @@ const Checkout = () => {
     if (!quote) return;
     if (!txHashInput.trim()) return alert("Entrez le hash de la transaction.");
     try {
-      const res = await fetch('/api/payment/submit-tx', {
+      const res = await apiFetch('/api/payment/submit-tx', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quoteId: quote.quoteId, txHash: txHashInput.trim() })
       });
       if (!res.ok) throw new Error('submit failed');
@@ -339,7 +342,7 @@ const Checkout = () => {
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                                 return;
                               }
-                              const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.quoteId }) });
+                              const res = await apiFetch('/api/orders', { method: 'POST', body: JSON.stringify({ quoteId: quote.quoteId }) });
                               if (!res.ok) return alert('Création de commande échouée');
                               const order = await res.json();
                               const params = new URLSearchParams({ orderId: order.orderId, txHash: status?.txHash || '', network: quote.network });

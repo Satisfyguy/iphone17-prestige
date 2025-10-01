@@ -28,6 +28,7 @@ model User {
 
   orders    Order[]
   quotes    Quote[]
+  payments  Payment[]
 
   @@map("users")
 }
@@ -42,9 +43,16 @@ model Quote {
   status      String
   txHash      String?
   userId      String?
+  // Rate locking metadata
+  fiatCurrency String?
+  fiatAmount   String?
+  rate         String?
+  rateProvider String?
+  rateAt       DateTime?
 
   user        User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   orders      Order[]
+  payment     Payment?
 
   @@index([userId])
   @@map("quotes")
@@ -60,8 +68,36 @@ model Order {
 
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   quote     Quote    @relation(fields: [quoteId], references: [quoteId], onDelete: Cascade)
+  payment   Payment?
 
   @@index([quoteId])
   @@index([userId])
   @@map("orders")
+}
+
+model Payment {
+  id             String   @id @default(cuid())
+  orderId        String?  @unique
+  quoteId        String   @unique
+  userId         String?
+  network        String
+  address        String
+  memo           String?
+  expectedAmount String
+  amountReceived String?
+  status         String   // pending | submitted | confirmed | expired | failed | underpaid | overpaid
+  txHash         String?
+  confirmations  Int?     // rempli manuellement si besoin
+  provider       String?  // "manual"
+  notesAdmin     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  quote  Quote  @relation(fields: [quoteId], references: [quoteId], onDelete: Cascade)
+  order  Order? @relation(fields: [orderId], references: [orderId], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([userId])
+  @@map("payments")
 }

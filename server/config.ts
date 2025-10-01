@@ -9,6 +9,10 @@ export const config = {
   admin: {
     token: process.env.ADMIN_TOKEN || "dev_admin_token"
   },
+  quotes: {
+    spreadBps: Number(process.env.SPREAD_BPS || 30),
+    ttlSeconds: Number(process.env.QUOTE_TTL_SECONDS || 900)
+  },
   wallets: {
     trc20: process.env.WALLET_TRC20 || "TXMockTronAddr9999999999999999999999",
     erc20: process.env.WALLET_ERC20 || "0xMockEthereumAddress0000000000000000",

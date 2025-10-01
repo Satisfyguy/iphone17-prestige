@@ -35,10 +35,12 @@ const authenticateToken = async (req: any, res: any, next: any) => {
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: "Access token required" });
 
-    const JWKS_URL = `${process.env.SUPABASE_URL || "https://rhigaegceftzmyxivfph.supabase.co"}/auth/v1/keys`;
+    const RAW_URL = process.env.SUPABASE_URL || "https://rhigaegceftzmyxivfph.supabase.co";
+    const BASE_URL = RAW_URL.replace(/\/+$/, ""); // trim trailing slashes
+    const JWKS_URL = `${BASE_URL}/auth/v1/keys`;
     const jwks = jose.createRemoteJWKSet(new URL(JWKS_URL));
     const { payload } = await jose.jwtVerify(token, jwks, {
-      issuer: `${process.env.SUPABASE_URL || "https://rhigaegceftzmyxivfph.supabase.co"}/auth/v1`,
+      issuer: `${BASE_URL}/auth/v1`,
       audience: process.env.SUPABASE_AUDIENCE || undefined
     });
 

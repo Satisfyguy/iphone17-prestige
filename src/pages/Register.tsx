@@ -1,33 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { signUp, user } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await apiFetch("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify({ email, password, firstName, lastName })
+      const { error } = await signUp(email, password, firstName, lastName);
+      if (error) throw error;
+      toast({
+        title: "Inscription réussie",
+        description: "Vérifiez votre email pour confirmer votre compte"
       });
-      if (!res.ok) throw new Error("register_failed");
-      const data = await res.json();
-      localStorage.setItem("auth_token", data.token);
-      navigate("/checkout");
-    } catch (e) {
-      alert("Inscription échouée");
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        title: "Erreur d'inscription",
+        description: error.message || "Veuillez réessayer",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

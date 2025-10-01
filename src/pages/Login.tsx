@@ -1,31 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { signIn, user } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await apiFetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password })
+      const { error } = await signIn(email, password);
+      if (error) throw error;
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue !"
       });
-      if (!res.ok) throw new Error("login_failed");
-      const data = await res.json();
-      localStorage.setItem("auth_token", data.token);
       navigate("/checkout");
-    } catch (e) {
-      alert("Connexion échouée");
+    } catch (error: any) {
+      toast({
+        title: "Erreur de connexion",
+        description: error.message || "Vérifiez vos identifiants",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

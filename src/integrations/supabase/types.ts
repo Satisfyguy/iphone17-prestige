@@ -14,7 +14,225 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          created_at: string
+          order_id: string
+          quote_id: string
+          status: string
+          total_usdt: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          order_id: string
+          quote_id: string
+          status: string
+          total_usdt: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          order_id?: string
+          quote_id?: string
+          status?: string
+          total_usdt?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["quote_id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          address: string
+          amount_received: string | null
+          confirmations: number | null
+          created_at: string
+          expected_amount: string
+          id: string
+          memo: string | null
+          network: string
+          notes_admin: string | null
+          order_id: string | null
+          provider: string | null
+          quote_id: string
+          status: string
+          tx_hash: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address: string
+          amount_received?: string | null
+          confirmations?: number | null
+          created_at?: string
+          expected_amount: string
+          id?: string
+          memo?: string | null
+          network: string
+          notes_admin?: string | null
+          order_id?: string | null
+          provider?: string | null
+          quote_id: string
+          status: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string
+          amount_received?: string | null
+          confirmations?: number | null
+          created_at?: string
+          expected_amount?: string
+          id?: string
+          memo?: string | null
+          network?: string
+          notes_admin?: string | null
+          order_id?: string | null
+          provider?: string | null
+          quote_id?: string
+          status?: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "payments_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: true
+            referencedRelation: "quotes"
+            referencedColumns: ["quote_id"]
+          },
+          {
+            foreignKeyName: "payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quotes: {
+        Row: {
+          address: string
+          amount_usdt: string
+          created_at: string
+          expires_at: string
+          fiat_amount: string | null
+          fiat_currency: string | null
+          network: string
+          quote_id: string
+          rate: string | null
+          rate_at: string | null
+          rate_provider: string | null
+          status: string
+          tx_hash: string | null
+          user_id: string | null
+        }
+        Insert: {
+          address: string
+          amount_usdt: string
+          created_at?: string
+          expires_at: string
+          fiat_amount?: string | null
+          fiat_currency?: string | null
+          network: string
+          quote_id: string
+          rate?: string | null
+          rate_at?: string | null
+          rate_provider?: string | null
+          status: string
+          tx_hash?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          address?: string
+          amount_usdt?: string
+          created_at?: string
+          expires_at?: string
+          fiat_amount?: string | null
+          fiat_currency?: string | null
+          network?: string
+          quote_id?: string
+          rate?: string | null
+          rate_at?: string | null
+          rate_provider?: string | null
+          status?: string
+          tx_hash?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

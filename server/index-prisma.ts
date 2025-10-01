@@ -8,6 +8,13 @@ import { supabaseAdmin } from "./supabase.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
+// Handle CORS preflight cleanly
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
 // Allow routes to work both with and without the "/api" prefix (Vercel catch-all)
 app.use((req, _res, next) => {
@@ -76,6 +83,10 @@ app.get("/api/auth/profile", authenticateToken, async (req: any, res) => {
     console.error("Profile error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+// Simple auth check
+app.get("/api/auth/whoami", authenticateToken, (req: any, res) => {
+  res.json({ user: req.user });
 });
 // Mirror without /api prefix (for serverless path forwarding)
 app.get("/auth/profile", authenticateToken, async (req: any, res) => {

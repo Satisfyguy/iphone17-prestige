@@ -2,12 +2,34 @@
 // datasource and generator
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // PRISMA_DATABASE_URL: Prisma Accelerate/Data Proxy
+  url       = env("PRISMA_DATABASE_URL")
+  // DATABASE_URL: direct connection string for migrations
+  directUrl = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  phone     String?
+  address   String?
+  city      String?
+  country   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+  quotes    Quote[]
+
+  @@map("users")
 }
 
 model Quote {
@@ -19,18 +41,27 @@ model Quote {
   createdAt   DateTime @default(now())
   status      String
   txHash      String?
+  userId      String?
 
+  user        User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   orders      Order[]
+
+  @@index([userId])
+  @@map("quotes")
 }
 
 model Order {
   orderId   String   @id
   quoteId   String
+  userId   String?
   status    String
   totalUSDT String
   createdAt DateTime @default(now())
 
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   quote     Quote    @relation(fields: [quoteId], references: [quoteId], onDelete: Cascade)
 
   @@index([quoteId])
+  @@index([userId])
+  @@map("orders")
 }

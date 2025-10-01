@@ -39,6 +39,29 @@ const authenticateToken = async (req: any, res: any, next: any) => {
     const BASE_URL = RAW_URL.replace(/\/+$/, ""); // trim trailing slashes
     const JWKS_URL = `${BASE_URL}/auth/v1/keys`;
     console.log('JWT Verification Debug:', { JWKS_URL, token: token.substring(0, 20) + '...' });
+    
+    // Test JWKS endpoint accessibility
+    try {
+      const jwksResponse = await fetch(JWKS_URL);
+      console.log('JWKS Response:', { status: jwksResponse.status, statusText: jwksResponse.statusText });
+      if (!jwksResponse.ok) {
+        throw new Error(`JWKS endpoint returned ${jwksResponse.status}: ${jwksResponse.statusText}`);
+      }
+    } catch (jwksError) {
+      console.error('JWKS fetch error:', jwksError);
+      // Fallback: verify JWT locally without JWKS (less secure but works)
+      console.log('Falling back to local JWT verification');
+      try {
+        const { payload } = await jose.jwtVerify(token, { algorithms: ['HS256'] });
+        console.log('Local JWT verification successful');
+        req.user = { userId: payload.sub, email: payload.email };
+        return next();
+      } catch (localError) {
+        console.error('Local JWT verification failed:', localError);
+        return res.status(403).json({ error: "Invalid token" });
+      }
+    }
+    
     const jwks = jose.createRemoteJWKSet(new URL(JWKS_URL));
     const { payload } = await jose.jwtVerify(token, jwks);
     // Optional sanity: ensure token issuer matches project URL

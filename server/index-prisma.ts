@@ -38,6 +38,7 @@ const authenticateToken = async (req: any, res: any, next: any) => {
     const RAW_URL = process.env.SUPABASE_URL || "https://rhigaegceftzmyxivfph.supabase.co";
     const BASE_URL = RAW_URL.replace(/\/+$/, ""); // trim trailing slashes
     const JWKS_URL = `${BASE_URL}/auth/v1/keys`;
+    console.log('JWT Verification Debug:', { JWKS_URL, token: token.substring(0, 20) + '...' });
     const jwks = jose.createRemoteJWKSet(new URL(JWKS_URL));
     const { payload } = await jose.jwtVerify(token, jwks);
     // Optional sanity: ensure token issuer matches project URL
@@ -46,11 +47,13 @@ const authenticateToken = async (req: any, res: any, next: any) => {
     if (!iss.startsWith(expectedIss)) {
       return res.status(403).json({ error: "Invalid token issuer" });
     }
+    console.log('JWT Verification Success:', { userId: payload.sub, email: payload.email });
 
     // payload.sub is the user id in Supabase
     req.user = { userId: payload.sub, email: payload.email };
     return next();
   } catch (err) {
+    console.error('JWT Verification Error:', err);
     return res.status(403).json({ error: "Invalid token" });
   }
 };

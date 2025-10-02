@@ -3,12 +3,16 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { products } from "@/data/products";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
+import { LaunchOfferUtils } from "@/lib/launch-offer";
+import { Package, Clock } from "lucide-react";
 
 const Comparateur = () => {
   const [selectedProducts, setSelectedProducts] = useState(products.map(p => p.id));
+  const isOfferActive = LaunchOfferUtils.isOfferActive();
 
   const toggleProduct = (id: string) => {
     if (selectedProducts.includes(id)) {
@@ -34,6 +38,14 @@ const Comparateur = () => {
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 animate-fade-in-up">
+            {/* Badge de lancement */}
+            {isOfferActive && (
+              <div className="inline-flex items-center px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-sm font-medium mb-6">
+                <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                Série de lancement • –20% jusqu'au 15 octobre 23:59
+              </div>
+            )}
+            
             <h1 className="mb-4">Comparez les modèles</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Trouvez l'iPhone 17 qui correspond parfaitement à vos besoins
@@ -60,14 +72,49 @@ const Comparateur = () => {
                 {/* Headers */}
                 <div></div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-6 gradient-card text-center">
+                  <Card key={product.id} className="p-6 gradient-card text-center relative">
+                    {/* Badges de lancement */}
+                    {isOfferActive && (
+                      <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+                        <Badge variant="destructive" className="text-xs font-semibold">
+                          <Package className="h-2 w-2 mr-1" />
+                          Série limitée
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs font-semibold bg-green-500/90 text-white">
+                          <Clock className="h-2 w-2 mr-1" />
+                          –20%
+                        </Badge>
+                      </div>
+                    )}
+                    
                     <img 
                       src={product.image} 
                       alt={product.name}
                       className="w-full aspect-square object-cover rounded-lg mb-4"
                     />
-                    <h3 className="font-semibold mb-2">{product.name}</h3>
-                    <p className="text-2xl font-bold mb-4">À partir de {product.price}€</p>
+                    <h3 className="font-semibold mb-3">{product.name}</h3>
+                    
+                    {/* Prix avec offre de lancement */}
+                    <div className="mb-4">
+                      {isOfferActive ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-center gap-2">
+                            <span className="text-xl font-bold text-green-600">
+                              {product.launchPrice}€
+                            </span>
+                            <span className="text-sm text-muted-foreground line-through">
+                              {product.price}€
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Prix après lancement: {product.price}€
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-2xl font-bold">À partir de {product.price}€</p>
+                      )}
+                    </div>
+                    
                     <Link to={`/produit/${product.id}`}>
                       <Button variant="hero" className="w-full">
                         Choisir
@@ -77,54 +124,54 @@ const Comparateur = () => {
                 ))}
 
                 {/* Écran */}
-                <div className="font-semibold flex items-center">Écran</div>
+                <div className="font-semibold flex items-center h-16 px-4">Écran</div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-4 flex items-center justify-center text-center">
-                    <p className="text-sm">{product.specs.screen}</p>
+                  <Card key={product.id} className="p-4 flex items-center justify-center text-center h-16">
+                    <p className="text-sm font-medium">{product.specs.screen}</p>
                   </Card>
                 ))}
 
                 {/* Puce */}
-                <div className="font-semibold flex items-center">Puce</div>
+                <div className="font-semibold flex items-center h-16 px-4">Puce</div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-4 flex items-center justify-center text-center">
-                    <p className="text-sm">{product.specs.chip}</p>
+                  <Card key={product.id} className="p-4 flex items-center justify-center text-center h-16">
+                    <p className="text-sm font-medium">{product.specs.chip}</p>
                   </Card>
                 ))}
 
                 {/* Appareil photo */}
-                <div className="font-semibold flex items-center">Appareil photo</div>
+                <div className="font-semibold flex items-center h-16 px-4">Appareil photo</div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-4 flex items-center justify-center text-center">
-                    <p className="text-sm">{product.specs.camera}</p>
+                  <Card key={product.id} className="p-4 flex items-center justify-center text-center h-16">
+                    <p className="text-sm font-medium">{product.specs.camera}</p>
                   </Card>
                 ))}
 
                 {/* Autonomie */}
-                <div className="font-semibold flex items-center">Autonomie</div>
+                <div className="font-semibold flex items-center h-16 px-4">Autonomie</div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-4 flex items-center justify-center text-center">
-                    <p className="text-sm">{product.specs.battery}</p>
+                  <Card key={product.id} className="p-4 flex items-center justify-center text-center h-16">
+                    <p className="text-sm font-medium">{product.specs.battery}</p>
                   </Card>
                 ))}
 
                 {/* Stockage */}
-                <div className="font-semibold flex items-center">Options de stockage</div>
+                <div className="font-semibold flex items-center h-20 px-4">Options de stockage</div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-4 flex items-center justify-center text-center">
-                    <p className="text-sm">{product.storage.map(s => s.size).join(", ")}</p>
+                  <Card key={product.id} className="p-4 flex items-center justify-center text-center h-20">
+                    <p className="text-sm font-medium">{product.storage.map(s => s.size).join(", ")}</p>
                   </Card>
                 ))}
 
                 {/* Couleurs */}
-                <div className="font-semibold flex items-center">Couleurs disponibles</div>
+                <div className="font-semibold flex items-center h-24 px-4">Couleurs disponibles</div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-4">
+                  <Card key={product.id} className="p-4 flex items-center justify-center h-24">
                     <div className="flex flex-wrap gap-2 justify-center">
                       {product.colors.map((color) => (
                         <div
                           key={color.name}
-                          className="w-8 h-8 rounded-full border-2 border-border"
+                          className="w-6 h-6 rounded-full border-2 border-border shadow-sm"
                           style={{ backgroundColor: color.hex }}
                           title={color.name}
                         />
@@ -134,10 +181,28 @@ const Comparateur = () => {
                 ))}
 
                 {/* Prix */}
-                <div className="font-semibold flex items-center">Prix de départ</div>
+                <div className="font-semibold flex items-center h-24 px-4">
+                  {isOfferActive ? "Prix de lancement" : "Prix de départ"}
+                </div>
                 {displayedProducts.map((product) => (
-                  <Card key={product.id} className="p-4 flex items-center justify-center text-center">
-                    <p className="text-xl font-bold">{product.price}€</p>
+                  <Card key={product.id} className="p-4 flex items-center justify-center text-center h-24">
+                    {isOfferActive ? (
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-lg font-bold text-green-600">
+                            {product.launchPrice}€
+                          </span>
+                          <span className="text-sm text-muted-foreground line-through">
+                            {product.price}€
+                          </span>
+                        </div>
+                        <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-700">
+                          –{product.savings}€
+                        </Badge>
+                      </div>
+                    ) : (
+                      <p className="text-xl font-bold">{product.price}€</p>
+                    )}
                   </Card>
                 ))}
               </div>
@@ -146,6 +211,29 @@ const Comparateur = () => {
 
           {/* CTA */}
           <div className="text-center mt-12 animate-fade-in">
+            {isOfferActive && (
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border border-green-200 dark:border-green-800 rounded-xl p-6 mb-8">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Clock className="h-5 w-5 text-green-600" />
+                  <span className="font-semibold text-green-800 dark:text-green-200">
+                    Offre de lancement limitée
+                  </span>
+                </div>
+                <p className="text-sm text-green-700 dark:text-green-300 mb-4">
+                  –20% sur tous les modèles • 10 pièces par produit • Fin le 15 octobre 23:59
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {displayedProducts.map((product) => (
+                    <Link key={product.id} to={`/produit/${product.id}`}>
+                      <Button variant="default" size="sm" className="bg-green-600 hover:bg-green-700">
+                        {product.name} - {product.launchPrice}€
+                      </Button>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <p className="text-lg text-muted-foreground mb-6">
               Besoin d'aide pour choisir ?
             </p>

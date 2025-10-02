@@ -1,27 +1,50 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { getProductById } from "@/data/products";
-import { ShoppingCart, Check } from "lucide-react";
+import { ShoppingCart, Check, Clock, Package, Truck, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
+import { useStock, useSessionId } from "@/hooks/useStock";
+import { LaunchOfferUtils } from "@/lib/launch-offer";
 import { SEO } from "@/components/SEO";
 import { ProductSchema } from "@/components/ProductSchema";
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
   const product = getProductById(id || "");
+  const sessionId = useSessionId();
+  const { stock, loading: stockLoading, refreshStock } = useStock(id || "");
   
   const [selectedColor, setSelectedColor] = useState(product?.colors[0]?.name || "");
   const [selectedStorage, setSelectedStorage] = useState(product?.storage[0]?.size || "");
+  const [timeRemaining, setTimeRemaining] = useState("");
+  const [isOfferActive, setIsOfferActive] = useState(true);
   
   const currentColor = product?.colors.find(c => c.name === selectedColor);
   const currentColorImage = currentColor?.image || product?.image;
 
   const { addItem } = useCart();
+
+  // Timer pour l'offre de lancement
+  useEffect(() => {
+    const updateTimer = () => {
+      const active = LaunchOfferUtils.isOfferActive();
+      setIsOfferActive(active);
+      
+      if (active) {
+        setTimeRemaining(LaunchOfferUtils.formatTimeRemaining());
+      }
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (!product) {
     return (
@@ -41,9 +64,23 @@ const Product = () => {
   }
 
   const selectedStoragePrice = product.storage.find(s => s.size === selectedStorage)?.price || 0;
-  const totalPrice = product.price + selectedStoragePrice;
+  const totalOriginalPrice = product.price + selectedStoragePrice;
+  const totalLaunchPrice = product.launchPrice + selectedStoragePrice;
+  const totalSavings = totalOriginalPrice - totalLaunchPrice;
+  
+  // Informations de stock
+  const stockRemaining = stock?.available || 0;
+  const stockBadge = LaunchOfferUtils.getStockBadge(stockRemaining);
+  const urgencyMessage = LaunchOfferUtils.getUrgencyMessage(stockRemaining);
 
   const handleAddToCart = () => {
+    if (stockRemaining <= 0) {
+      toast.error("Stock épuisé", {
+        description: "Ce produit n'est plus disponible",
+      });
+      return;
+    }
+
     addItem(
       {
         id: product.id,
@@ -51,7 +88,7 @@ const Product = () => {
         image: currentColorImage || "",
         color: selectedColor,
         storage: selectedStorage,
-        price: totalPrice,
+        price: isOfferActive ? totalLaunchPrice : totalOriginalPrice,
       },
       1
     );
@@ -73,7 +110,7 @@ const Product = () => {
         name={`${product.fullName} ${selectedColor} ${selectedStorage}`}
         description={product.description}
         image={currentColorImage || ""}
-        price={totalPrice}
+        price={isOfferActive ? totalLaunchPrice : totalOriginalPrice}
         sku={`${product.id}-${selectedColor}-${selectedStorage}`}
         url={`${window.location.origin}/product/${product.id}`}
       />
@@ -107,13 +144,73 @@ const Product = () => {
 
             {/* Product Info */}
             <div className="space-y-8 animate-fade-in-up">
+              {/* Badges de lancement */}
+              <div className="flex flex-wrap gap-3">
+                <Badge variant="destructive" className="text-sm font-semibold">
+                  <Package className="h-3 w-3 mr-1" />
+                  Édition de lancement — 10 pièces
+                </Badge>
+                {isOfferActive && (
+                  <Badge variant="secondary" className="text-sm font-semibold bg-green-500/90 text-white">
+                    <Clock className="h-3 w-3 mr-1" />
+                    –20% jusqu'au 15 octobre, 23:59
+                  </Badge>
+                )}
+                <Badge variant="outline" className="text-sm">
+                  <Truck className="h-3 w-3 mr-1" />
+                  Livraison 48h offerte
+                </Badge>
+              </div>
+
               <div>
                 <h1 className="mb-4">{product.fullName}</h1>
                 <p className="text-lg text-muted-foreground mb-6">
                   {product.description.replace("iPhone 17 Air", "iPhone Air")}
                 </p>
-                <div className="text-4xl font-bold">
-                  {totalPrice}€
+                
+                {/* Stock et urgence */}
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge variant={stockBadge.variant} className="text-sm">
+                      {stockBadge.text}
+                    </Badge>
+                    {stockRemaining > 0 && (
+                      <span className="text-sm text-orange-600 font-medium">
+                        {urgencyMessage}
+                      </span>
+                    )}
+                  </div>
+                  {isOfferActive && timeRemaining && (
+                    <div className="text-sm text-red-600 font-medium">
+                      Fin de l'offre dans {timeRemaining}
+                    </div>
+                  )}
+                </div>
+
+                {/* Prix */}
+                <div className="space-y-2">
+                  {isOfferActive ? (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <span className="text-4xl font-bold text-green-600">
+                          {totalLaunchPrice}€
+                        </span>
+                        <span className="text-2xl text-muted-foreground line-through">
+                          {totalOriginalPrice}€
+                        </span>
+                        <Badge variant="secondary" className="bg-green-500/10 text-green-700">
+                          –{totalSavings}€
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Prix après lancement: {totalOriginalPrice}€
+                      </p>
+                    </>
+                  ) : (
+                    <div className="text-4xl font-bold">
+                      {totalOriginalPrice}€
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -165,15 +262,47 @@ const Product = () => {
               </div>
 
               {/* Add to Cart */}
-              <Button 
-                variant="hero" 
-                size="lg" 
-                className="w-full"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Ajouter au panier
-              </Button>
+              {stockRemaining > 0 ? (
+                <div className="space-y-3">
+                  <Button 
+                    variant="hero" 
+                    size="lg" 
+                    className="w-full"
+                    onClick={handleAddToCart}
+                  >
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    {isOfferActive 
+                      ? `Ajouter — ${totalLaunchPrice}€ (–20%)` 
+                      : `Ajouter — ${totalOriginalPrice}€`
+                    }
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground">
+                    Limité à 1 par client
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="w-full"
+                    disabled
+                  >
+                    <AlertTriangle className="mr-2 h-5 w-5" />
+                    Épuisé (10/10 vendus)
+                  </Button>
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="w-full"
+                  >
+                    Rejoindre la liste d'attente
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground">
+                    Prochain prix: {totalOriginalPrice}€
+                  </p>
+                </div>
+              )}
 
               {/* Features */}
               <Card className="p-6 gradient-card">

@@ -29,7 +29,9 @@ export interface Product {
   id: string;
   name: string;
   fullName: string;
-  price: number;
+  price: number; // Prix après lancement (prix de référence)
+  launchPrice: number; // Prix de lancement (-20%)
+  savings: number; // Économies réalisées
   image: string;
   features: string[];
   description: string;
@@ -55,7 +57,9 @@ export const products: Product[] = [
     id: "iphone-17",
     name: "iPhone 17",
     fullName: "iPhone 17",
-    price: 969,
+    price: 969, // Prix après lancement
+    launchPrice: 775, // Prix de lancement (-20%)
+    savings: 194, // Économies
     image: "/iphone-17-colors.webp", // Updated to use the public directory path
     features: [
       "Puce A18 nouvelle génération",
@@ -85,7 +89,9 @@ export const products: Product[] = [
     id: "iphone-17-air",
     name: "iPhone Air",
     fullName: "iPhone Air",
-    price: 1229,
+    price: 1229, // Prix après lancement
+    launchPrice: 983, // Prix de lancement (-20%)
+    savings: 246, // Économies
     image: "/iphone-air-colors.webp", // Updated image for iPhone Air from public directory
     features: [
       "Design ultra-fin 5.5mm",
@@ -115,7 +121,9 @@ export const products: Product[] = [
     id: "iphone-17-pro",
     name: "iPhone 17 Pro",
     fullName: "iPhone 17 Pro",
-    price: 1329,
+    price: 1329, // Prix après lancement
+    launchPrice: 1063, // Prix de lancement (-20%)
+    savings: 266, // Économies
     image: "/iphone-17-pro-orange.webp", // Updated image path
     features: [
       "Puce A18 Pro",
@@ -144,7 +152,9 @@ export const products: Product[] = [
     id: "iphone-17-pro-max",
     name: "iPhone 17 Pro Max",
     fullName: "iPhone 17 Pro Max",
-    price: 1479,
+    price: 1479, // Prix après lancement
+    launchPrice: 1183, // Prix de lancement (-20%)
+    savings: 296, // Économies
     image: "/iphone-17-pro-orange.webp", // Updated image path
     features: [
       "Écran 6,9\" ProMotion",

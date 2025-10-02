@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { LaunchOfferUtils } from "@/lib/launch-offer";
 
 export const Footer = () => {
   return (
@@ -106,7 +107,14 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border">
+        <div className="mt-12 pt-8 border-t border-border space-y-4">
+          {/* Disclaimer de l'offre de lancement */}
+          <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+            <p className="text-xs text-orange-800 dark:text-orange-200 text-center leading-relaxed">
+              {LaunchOfferUtils.getLegalDisclaimer()}
+            </p>
+          </div>
+          
           <p className="text-center text-sm text-muted-foreground">
             © 2025 iPhone 17 Store. Tous droits réservés. Revendeur indépendant non affilié à Apple Inc.
           </p>

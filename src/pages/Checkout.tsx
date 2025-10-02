@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useMemo, useState } from "react";
 import * as QRCode from "qrcode";
 import { supabase } from "@/integrations/supabase/client";
+import { CryptoHelpWidget } from "@/components/CryptoHelpWidget";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -405,6 +406,7 @@ const Checkout = () => {
         </div>
       </main>
       <Footer />
+      <CryptoHelpWidget />
     </div>
   );
 };

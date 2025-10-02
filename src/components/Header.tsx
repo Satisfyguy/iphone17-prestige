@@ -20,9 +20,9 @@ export const Header = () => {
         <div className="flex h-32 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 group">
             <img 
-              src="/tekloop-logo.svg" 
+              src="/tekloop-logo.png" 
               alt="TekL∞p" 
-              className="h-28 w-auto transition-all duration-300 group-hover:scale-105 group-hover:opacity-90"
+              className="h-28 w-auto transition-all duration-300 group-hover:scale-105 group-hover:opacity-90 filter brightness-110 contrast-110"
             />
           </Link>
 
@@ -41,6 +41,10 @@ export const Header = () => {
             </Link>
             <Link to="/support" className="text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 relative group">
               Support
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+            <Link to="/guide-crypto" className="text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 relative group">
+              Guide Crypto
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </nav>

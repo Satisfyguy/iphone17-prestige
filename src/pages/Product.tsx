@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getProductById } from "@/data/products";
-import { ShoppingCart, Check, Clock, Package, Truck, AlertTriangle, CheckCircle } from "lucide-react";
+import { ShoppingCart, Check, Clock, Package, Truck, AlertTriangle, CheckCircle, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
 import { useStock, useSessionId } from "@/hooks/useStock";
@@ -22,6 +22,7 @@ const Product = () => {
   const product = getProductById(id || "");
   const sessionId = useSessionId();
   const { stock, loading: stockLoading, refreshStock } = useStock(id || "");
+  const navigate = useNavigate();
   
   const [selectedColor, setSelectedColor] = useState(product?.colors[0]?.name || "");
   const [selectedStorage, setSelectedStorage] = useState(product?.storage[0]?.size || "");
@@ -68,7 +69,8 @@ const Product = () => {
 
   const selectedStoragePrice = product.storage.find(s => s.size === selectedStorage)?.price || 0;
   const totalOriginalPrice = product.price + selectedStoragePrice;
-  const totalLaunchPrice = product.launchPrice + selectedStoragePrice;
+  // Calculer -20% sur le prix total (produit + stockage)
+  const totalLaunchPrice = Math.round((product.price + selectedStoragePrice) * 0.8);
   const totalSavings = totalOriginalPrice - totalLaunchPrice;
   
   // Informations de stock
@@ -97,6 +99,35 @@ const Product = () => {
     );
     toast.success("Produit ajouté au panier", {
       description: `${product.name} - ${selectedColor} - ${selectedStorage}`,
+    });
+  };
+
+  const handleBuyNow = () => {
+    if (stockRemaining <= 0) {
+      toast.error("Stock épuisé", {
+        description: "Ce produit n'est plus disponible",
+      });
+      return;
+    }
+
+    // Ajouter le produit au panier
+    addItem(
+      {
+        id: product.id,
+        name: product.fullName,
+        image: currentColorImage || "",
+        color: selectedColor,
+        storage: selectedStorage,
+        price: isOfferActive ? totalLaunchPrice : totalOriginalPrice,
+      },
+      1
+    );
+
+    // Rediriger vers le panier
+    navigate('/panier');
+    
+    toast.success("Produit ajouté au panier", {
+      description: "Redirection vers votre panier...",
     });
   };
 
@@ -305,18 +336,30 @@ const Product = () => {
                     </div>
                   </div>
                   
-                  <Button 
-                    variant="hero" 
-                    size="lg" 
-                    className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold"
-                    onClick={handleAddToCart}
-                  >
-                    <ShoppingCart className="mr-2 h-5 w-5" />
-                    {isOfferActive 
-                      ? `🔥 ACHETER MAINTENANT — ${totalLaunchPrice}€ (-20%)` 
-                      : `ACHETER MAINTENANT — ${totalOriginalPrice}€`
-                    }
-                  </Button>
+                  <div className="space-y-3">
+                    <Button 
+                      variant="hero" 
+                      size="lg" 
+                      className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold"
+                      onClick={handleBuyNow}
+                    >
+                      <Zap className="mr-2 h-5 w-5" />
+                      {isOfferActive 
+                        ? `🔥 ACHETER MAINTENANT — ${totalLaunchPrice}€ (-20%)` 
+                        : `ACHETER MAINTENANT — ${totalOriginalPrice}€`
+                      }
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-white"
+                      onClick={handleAddToCart}
+                    >
+                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      Ajouter au panier
+                    </Button>
+                  </div>
                   
                   <div className="text-center space-y-1">
                     <p className="text-xs text-orange-600 font-medium">

@@ -16,6 +16,7 @@ import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import GuideCrypto from "./pages/GuideCrypto";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
         <Route path="/accessoires" element={<Accessoires />} />
         <Route path="/support" element={<Support />} />
         <Route path="/a-propos" element={<APropos />} />
+        <Route path="/guide-crypto" element={<GuideCrypto />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

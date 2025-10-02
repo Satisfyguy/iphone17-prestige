@@ -108,13 +108,13 @@ export class LaunchOfferUtils {
   }
 
   // Obtenir le badge de stock
-  static getStockBadge(stockRemaining: number): { text: string; variant: 'default' | 'warning' | 'destructive' } {
+  static getStockBadge(stockRemaining: number): { text: string; variant: 'default' | 'destructive' | 'outline' | 'secondary' } {
     if (stockRemaining <= 0) {
       return { text: "Épuisé", variant: 'destructive' };
     } else if (stockRemaining <= 3) {
       return { text: "Stock limité", variant: 'destructive' };
     } else if (stockRemaining <= 5) {
-      return { text: "Dernières pièces", variant: 'warning' };
+      return { text: "Dernières pièces", variant: 'secondary' };
     }
     return { text: "Série limitée", variant: 'default' };
   }

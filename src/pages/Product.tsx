@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getProductById } from "@/data/products";
-import { ShoppingCart, Check, Clock, Package, Truck, AlertTriangle } from "lucide-react";
+import { ShoppingCart, Check, Clock, Package, Truck, AlertTriangle, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
 import { useStock, useSessionId } from "@/hooks/useStock";

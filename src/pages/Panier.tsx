@@ -7,7 +7,7 @@ import { ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 
 const Panier = () => {
-  const { items, total, changeQty, removeItem, clear } = useCart();
+  const { items, total, originalTotal, totalSavings, changeQty, removeItem, clear } = useCart();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -69,10 +69,28 @@ const Panier = () => {
                 <Card className="p-6 gradient-card sticky top-24">
                   <h3 className="font-semibold mb-4">Récapitulatif</h3>
                   <div className="space-y-3 mb-6">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Sous-total</span>
-                      <span className="font-semibold">{total}€</span>
-                    </div>
+                    {totalSavings > 0 && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Sous-total</span>
+                          <span className="font-semibold line-through text-muted-foreground">{originalTotal}€</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Prix de lancement (-20%)</span>
+                          <span className="font-semibold text-green-600">{total}€</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Économies</span>
+                          <span className="font-semibold text-green-600">-{totalSavings}€</span>
+                        </div>
+                      </>
+                    )}
+                    {totalSavings === 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Sous-total</span>
+                        <span className="font-semibold">{total}€</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Livraison</span>
                       <span className="font-semibold text-success">Gratuite</span>
@@ -82,6 +100,11 @@ const Panier = () => {
                         <span className="font-semibold">Total</span>
                         <span className="text-2xl font-bold">{total}€</span>
                       </div>
+                      {totalSavings > 0 && (
+                        <div className="text-sm text-green-600 mt-1">
+                          Vous économisez {totalSavings}€ !
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex gap-3">

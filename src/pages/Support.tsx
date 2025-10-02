@@ -11,7 +11,7 @@ const Support = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
-        title="Support & Assistance iPhone 17 - FAQ et Contact | TechLoop"
+        title="Support & Assistance iPhone 17 - FAQ et Contact | TekL∞p"
         description="Besoin d'aide avec votre iPhone 17 ? FAQ complète, support client 7j/7, garantie Apple, livraison, retours. Contactez nos experts Apple."
         keywords="support iPhone 17, FAQ iPhone, assistance Apple, service client iPhone, garantie Apple, retour iPhone"
       />

@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { getProductById } from "@/data/products";
+import { LaunchOfferUtils } from "@/lib/launch-offer";
 
 export type CartItem = {
   id: string;
@@ -6,13 +8,15 @@ export type CartItem = {
   image: string;
   color: string;
   storage: string;
-  price: number;
+  price: number; // Prix actuellement payé (avec promotion si applicable)
   qty: number;
 };
 
 type CartContextType = {
   items: CartItem[];
   total: number;
+  originalTotal: number; // Total sans promotion
+  totalSavings: number; // Économies totales
   count: number;
   addItem: (item: Omit<CartItem, "qty">, qty?: number) => void;
   removeItem: (id: string, color?: string, storage?: string) => void;
@@ -65,7 +69,45 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const total = useMemo(() => items.reduce((s, i) => s + i.price * i.qty, 0), [items]);
   const count = useMemo(() => items.reduce((s, i) => s + i.qty, 0), [items]);
 
-  const value: CartContextType = { items, total, count, addItem, removeItem, changeQty, clear };
+  // Calculer le prix original et les économies
+  const { originalTotal, totalSavings } = useMemo(() => {
+    const isOfferActive = LaunchOfferUtils.isOfferActive();
+    
+    let originalSum = 0;
+    let currentSum = 0;
+
+    items.forEach(item => {
+      const product = getProductById(item.id);
+      if (product) {
+        // Trouver le prix du stockage sélectionné
+        const storagePrice = product.storage.find(s => s.size === item.storage)?.price || 0;
+        
+        // Prix original (sans promotion)
+        const originalPrice = product.price + storagePrice;
+        originalSum += originalPrice * item.qty;
+        
+        // Prix actuel (celui dans le panier)
+        currentSum += item.price * item.qty;
+      }
+    });
+
+    return {
+      originalTotal: originalSum,
+      totalSavings: originalSum - currentSum
+    };
+  }, [items]);
+
+  const value: CartContextType = { 
+    items, 
+    total, 
+    originalTotal, 
+    totalSavings, 
+    count, 
+    addItem, 
+    removeItem, 
+    changeQty, 
+    clear 
+  };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

@@ -13,7 +13,7 @@ const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
-        title="TechLoop - iPhone 17, Pro, Pro Max, Air | Livraison Gratuite"
+        title="TekL∞p - iPhone 17, Pro, Pro Max, Air | Livraison Gratuite"
         description="Achetez l'iPhone 17, iPhone 17 Air, iPhone 17 Pro et Pro Max. Livraison gratuite, garantie Apple officielle, paiement USDT sécurisé. Stock disponible."
         keywords="iPhone 17, iPhone 17 Pro, iPhone 17 Pro Max, iPhone 17 Air, Apple France, acheter iPhone, paiement crypto, USDT"
         type="website"

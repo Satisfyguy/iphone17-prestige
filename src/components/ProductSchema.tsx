@@ -5,12 +5,15 @@ interface ProductSchemaProps {
   description: string;
   image: string;
   price: number;
+  originalPrice?: number; // Prix original avant promotion
   currency?: string;
   brand?: string;
   sku?: string;
   condition?: string;
   availability?: string;
   url: string;
+  validFrom?: string; // Date de début de l'offre
+  validThrough?: string; // Date de fin de l'offre
 }
 
 export const ProductSchema = ({
@@ -18,12 +21,15 @@ export const ProductSchema = ({
   description,
   image,
   price,
+  originalPrice,
   currency = 'EUR',
   brand = 'Apple',
   sku,
   condition = 'NewCondition',
   availability = 'InStock',
-  url
+  url,
+  validFrom,
+  validThrough
 }: ProductSchemaProps) => {
   useEffect(() => {
     const schema = {
@@ -36,7 +42,50 @@ export const ProductSchema = ({
         "@type": "Brand",
         "name": brand
       },
-      "offers": {
+      "offers": originalPrice && originalPrice > price ? [
+        // Offre promotionnelle
+        {
+          "@type": "Offer",
+          "url": url,
+          "priceCurrency": currency,
+          "price": price,
+          "priceValidUntil": validThrough,
+          "validFrom": validFrom,
+          "itemCondition": `https://schema.org/${condition}`,
+          "availability": `https://schema.org/${availability}`,
+          "seller": {
+            "@type": "Organization",
+            "name": "TekL∞p"
+          },
+          "additionalProperty": [
+            {
+              "@type": "PropertyValue",
+              "name": "Promotion",
+              "value": "Prix de lancement -20%"
+            },
+            {
+              "@type": "PropertyValue", 
+              "name": "Économies",
+              "value": `${originalPrice - price}€`
+            }
+          ]
+        },
+        // Prix original (pour référence)
+        {
+          "@type": "Offer",
+          "url": url,
+          "priceCurrency": currency,
+          "price": originalPrice,
+          "priceType": "https://schema.org/MSRP",
+          "itemCondition": `https://schema.org/${condition}`,
+          "availability": `https://schema.org/${availability}`,
+          "seller": {
+            "@type": "Organization",
+            "name": "TekL∞p"
+          }
+        }
+      ] : {
+        // Offre normale
         "@type": "Offer",
         "url": url,
         "priceCurrency": currency,
@@ -45,7 +94,7 @@ export const ProductSchema = ({
         "availability": `https://schema.org/${availability}`,
         "seller": {
           "@type": "Organization",
-          "name": "TechLoop"
+          "name": "TekL∞p"
         }
       }
     };

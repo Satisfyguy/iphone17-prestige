@@ -12,6 +12,7 @@ import { useCart } from "@/hooks/useCart";
 import { useStock, useSessionId } from "@/hooks/useStock";
 import { LaunchOfferUtils } from "@/lib/launch-offer";
 import { SEO } from "@/components/SEO";
+import { BreadcrumbsWithSchema } from "@/components/BreadcrumbsWithSchema";
 import { ProductSchema } from "@/components/ProductSchema";
 
 const Product = () => {
@@ -100,7 +101,7 @@ const Product = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
-        title={`${product.fullName} - ${selectedColor} ${selectedStorage} | TechLoop`}
+        title={`${product.fullName} - ${selectedColor} ${selectedStorage} | TekL∞p`}
         description={`Achetez ${product.fullName} en ${selectedColor} avec ${selectedStorage} de stockage. ${product.description} Livraison gratuite, garantie Apple.`}
         keywords={`${product.name}, ${product.fullName}, iPhone ${selectedStorage}, iPhone ${selectedColor}, acheter ${product.name}`}
         ogImage={currentColorImage}
@@ -111,21 +112,19 @@ const Product = () => {
         description={product.description}
         image={currentColorImage || ""}
         price={isOfferActive ? totalLaunchPrice : totalOriginalPrice}
+        originalPrice={isOfferActive ? totalOriginalPrice : undefined}
         sku={`${product.id}-${selectedColor}-${selectedStorage}`}
-        url={`${window.location.origin}/product/${product.id}`}
+        url={`${window.location.origin}/produit/${product.id}`}
+        validFrom={isOfferActive ? "2025-01-01T00:00:00+01:00" : undefined}
+        validThrough={isOfferActive ? "2025-10-15T23:59:59+02:00" : undefined}
       />
       <Header />
       
       <main className="flex-1 py-12">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <BreadcrumbsWithSchema />
+        </div>
         <div className="container mx-auto px-4">
-          {/* Breadcrumb */}
-          <div className="mb-8 text-sm">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition-smooth">
-              Accueil
-            </Link>
-            <span className="mx-2 text-muted-foreground">/</span>
-            <span className="text-foreground font-medium">{product.name}</span>
-          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Image */}

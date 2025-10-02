@@ -5,9 +5,9 @@ export const OrganizationSchema = () => {
     const schema = {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "TechLoop",
-      "url": "https://lovable.dev",
-      "logo": "https://lovable.dev/opengraph-image-p98pqg.png",
+      "name": "TekL∞p",
+      "url": "https://tekloop.vercel.app",
+      "logo": "https://tekloop.vercel.app/iphone-17-colors.webp",
       "description": "Revendeur Apple agréé spécialisé dans l'iPhone 17, iPhone 17 Air, iPhone 17 Pro et Pro Max",
       "contactPoint": {
         "@type": "ContactPoint",
@@ -15,9 +15,9 @@ export const OrganizationSchema = () => {
         "availableLanguage": ["French"]
       },
       "sameAs": [
-        "https://twitter.com/techloop",
-        "https://facebook.com/techloop",
-        "https://instagram.com/techloop"
+        "https://twitter.com/tekloop",
+        "https://facebook.com/tekloop",
+        "https://instagram.com/tekloop"
       ]
     };
     

@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Checkout = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
-  const { items, total } = useCart();
+  const { items, total, originalTotal, totalSavings } = useCart();
   const [network, setNetwork] = useState<string>("TRC-20");
   const [isRequesting, setIsRequesting] = useState<boolean>(false);
   const [quote, setQuote] = useState<null | {
@@ -370,10 +370,31 @@ const Checkout = () => {
                       </div>
                     ))}
                     <div className="border-t border-border pt-3">
+                      {totalSavings > 0 && (
+                        <>
+                          <div className="flex justify-between text-sm mb-2">
+                            <span className="text-muted-foreground">Sous-total</span>
+                            <span className="line-through text-muted-foreground">{originalTotal}€</span>
+                          </div>
+                          <div className="flex justify-between text-sm mb-2">
+                            <span className="text-muted-foreground">Prix de lancement (-20%)</span>
+                            <span className="text-green-600 font-semibold">{total}€</span>
+                          </div>
+                          <div className="flex justify-between text-sm mb-3">
+                            <span className="text-muted-foreground">Économies</span>
+                            <span className="text-green-600 font-semibold">-{totalSavings}€</span>
+                          </div>
+                        </>
+                      )}
                       <div className="flex justify-between">
                         <span className="font-semibold">Total</span>
                         <span className="text-2xl font-bold">{eurTotal}€</span>
                       </div>
+                      {totalSavings > 0 && (
+                        <div className="text-sm text-green-600 mt-1">
+                          Vous économisez {totalSavings}€ !
+                        </div>
+                      )}
                     </div>
                   </div>
                   <Link to="/panier"><Button variant="outline" className="w-full">Retour au panier</Button></Link>

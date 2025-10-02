@@ -5,4 +5,4 @@ Disallow: /checkout
 Disallow: /login
 Disallow: /register
 
-Sitemap: https://lovable.dev/sitemap.xml
+Sitemap: https://tekloop.vercel.app/sitemap.xml

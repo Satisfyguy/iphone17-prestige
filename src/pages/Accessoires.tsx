@@ -31,7 +31,7 @@ const Accessoires = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
-        title="Accessoires iPhone 17 - Coques, AirPods, Chargeurs MagSafe | TechLoop"
+        title="Accessoires iPhone 17 - Coques, AirPods, Chargeurs MagSafe | TekL∞p"
         description="Découvrez nos accessoires iPhone 17 : coques MagSafe, chargeurs sans fil, AirPods Pro, Apple Watch. Livraison gratuite, garantie Apple officielle."
         keywords="accessoires iPhone 17, coque iPhone 17, MagSafe, AirPods Pro, Apple Watch, chargeur iPhone"
       />

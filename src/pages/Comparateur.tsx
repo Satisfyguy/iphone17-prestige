@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { BreadcrumbsWithSchema } from "@/components/BreadcrumbsWithSchema";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +30,7 @@ const Comparateur = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
-        title="Comparateur iPhone 17, Pro, Pro Max, Air - Trouvez le meilleur | TechLoop"
+        title="Comparateur iPhone 17, Pro, Pro Max, Air - Trouvez le meilleur | TekL∞p"
         description="Comparez les iPhone 17, iPhone 17 Air, iPhone 17 Pro et Pro Max. Découvrez les différences de prix, écran, appareil photo, autonomie. Guide d'achat complet."
         keywords="comparateur iPhone 17, iPhone 17 vs Pro, iPhone 17 Pro Max vs Pro, différence iPhone 17, quel iPhone choisir"
       />
@@ -37,6 +38,7 @@ const Comparateur = () => {
       
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4">
+          <BreadcrumbsWithSchema />
           <div className="text-center mb-12 animate-fade-in-up">
             {/* Badge de lancement */}
             {isOfferActive && (

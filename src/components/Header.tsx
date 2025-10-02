@@ -17,12 +17,12 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex h-24 items-center justify-between">
+        <div className="flex h-32 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <img 
               src="/tekloop-logo.svg" 
               alt="TekL∞p" 
-              className="h-20 w-auto transition-opacity hover:opacity-80"
+              className="h-28 w-auto transition-opacity hover:opacity-80"
             />
           </Link>
 

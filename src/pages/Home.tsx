@@ -8,14 +8,15 @@ import { Truck, Shield, RefreshCw, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
 import { OrganizationSchema } from "@/components/OrganizationSchema";
+import { SecurityBadges } from "@/components/TrustBadges";
 
 const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
-        title="TekL∞p - iPhone 17, Pro, Pro Max, Air | Livraison Gratuite"
-        description="Achetez l'iPhone 17, iPhone 17 Air, iPhone 17 Pro et Pro Max. Livraison gratuite, garantie Apple officielle, paiement USDT sécurisé. Stock disponible."
-        keywords="iPhone 17, iPhone 17 Pro, iPhone 17 Pro Max, iPhone 17 Air, Apple France, acheter iPhone, paiement crypto, USDT"
+        title="iPhone 17 disponible - Pro, Pro Max, Air en stock | TekL∞p"
+        description="iPhone 17 disponible maintenant. iPhone 17 Pro, Pro Max et Air neufs sous emballage Apple en stock. Livraison gratuite 48h, garantie Apple officielle."
+        keywords="iPhone 17 disponible, iPhone 17 Pro disponible, iPhone 17 Pro Max disponible, iPhone 17 Air disponible, Apple neuf, stock iPhone 17, acheter iPhone 17"
         type="website"
       />
       <OrganizationSchema />
@@ -33,10 +34,10 @@ const Home = () => {
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-                Série de lancement iPhone 17
+                iPhone 17 disponible maintenant
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground">
-                –20% jusqu'au 15 octobre, 23:59. 10 pièces par modèle. Livraison 48h offerte.
+                iPhone 17, Pro et Pro Max neufs sous emballage Apple. –20% jusqu'au 15 octobre, 23:59. Stock disponible.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link to="/comparateur">
@@ -69,9 +70,9 @@ const Home = () => {
         <section className="py-20 bg-secondary">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="mb-4">Choisissez votre iPhone 17</h2>
+              <h2 className="mb-4">iPhone 17 disponible - Tous modèles en stock</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Quatre modèles exceptionnels conçus pour répondre à tous vos besoins
+                iPhone 17, iPhone 17 Pro, iPhone 17 Pro Max et iPhone Air neufs sous emballage Apple. Stock disponible pour livraison immédiate.
               </p>
             </div>
             
@@ -259,6 +260,17 @@ const Home = () => {
                 <p className="text-xs text-muted-foreground">Cliente vérifiée</p>
               </Card>
             </div>
+          </div>
+        </section>
+
+        {/* Security & Trust */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-2">Achat 100% sécurisé</h2>
+              <p className="text-muted-foreground">Vos garanties pour un achat en toute confiance</p>
+            </div>
+            <SecurityBadges />
           </div>
         </section>
       </main>

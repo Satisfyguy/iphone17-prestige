@@ -54,11 +54,11 @@ Deno.serve(async (req) => {
     // Set expiry (15 minutes)
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
     
-    // Determine address based on network
+    // Determine address based on network (using environment variables)
     const addresses: Record<string, string> = {
-      'TRC-20': 'TYour-TRON-Address-Here',
-      'ERC-20': '0xYour-Ethereum-Address-Here',
-      'BEP-20': '0xYour-BSC-Address-Here',
+      'TRC-20': Deno.env.get('WALLET_TRC20') || 'TYour-TRON-Address-Here',
+      'ERC-20': Deno.env.get('WALLET_ERC20') || '0xYour-Ethereum-Address-Here', 
+      'BEP-20': Deno.env.get('WALLET_BEP20') || '0xYour-BSC-Address-Here',
     };
     
     const address = addresses[body.network] || addresses['TRC-20'];

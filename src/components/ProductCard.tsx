@@ -22,10 +22,13 @@ export const ProductCard = ({ id, name, image, price, launchPrice, savings, feat
         <div className="aspect-[4/3] overflow-hidden bg-secondary relative">
           {/* Badges de lancement */}
           <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-            <Badge variant="destructive" className="text-xs font-semibold">
-              Série limitée • 10 ex.
-            </Badge>
             <Badge variant="secondary" className="text-xs font-semibold bg-green-500/90 text-white">
+              ✓ DISPONIBLE
+            </Badge>
+            <Badge variant="outline" className="text-xs font-semibold bg-white/90 text-gray-700">
+              Neuf sous emballage
+            </Badge>
+            <Badge variant="destructive" className="text-xs font-semibold">
               –20% lancement
             </Badge>
           </div>
@@ -83,7 +86,7 @@ export const ProductCard = ({ id, name, image, price, launchPrice, savings, feat
           
           <Link to={`/produit/${id}`}>
             <Button className="w-full" variant="hero">
-              Découvrir
+              {launchPrice ? `Réserver maintenant • ${launchPrice}` : `Découvrir • ${price}`}
             </Button>
           </Link>
         </div>

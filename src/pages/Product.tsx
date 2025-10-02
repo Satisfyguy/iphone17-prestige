@@ -14,6 +14,8 @@ import { LaunchOfferUtils } from "@/lib/launch-offer";
 import { SEO } from "@/components/SEO";
 import { BreadcrumbsWithSchema } from "@/components/BreadcrumbsWithSchema";
 import { ProductSchema } from "@/components/ProductSchema";
+import { VisitorCounter } from "@/components/SocialProof";
+import { TrustBadges } from "@/components/TrustBadges";
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
@@ -143,14 +145,17 @@ const Product = () => {
 
             {/* Product Info */}
             <div className="space-y-8 animate-fade-in-up">
-              {/* Badges de lancement */}
+              {/* Badges de disponibilité */}
               <div className="flex flex-wrap gap-3">
-                <Badge variant="destructive" className="text-sm font-semibold">
+                <Badge variant="secondary" className="text-sm font-semibold bg-green-500/90 text-white">
                   <Package className="h-3 w-3 mr-1" />
-                  Édition de lancement — 10 pièces
+                  ✓ DISPONIBLE EN STOCK
+                </Badge>
+                <Badge variant="outline" className="text-sm font-semibold border-blue-500 text-blue-700 bg-blue-50">
+                  Produit Apple neuf sous emballage
                 </Badge>
                 {isOfferActive && (
-                  <Badge variant="secondary" className="text-sm font-semibold bg-green-500/90 text-white">
+                  <Badge variant="destructive" className="text-sm font-semibold">
                     <Clock className="h-3 w-3 mr-1" />
                     –20% jusqu'au 15 octobre, 23:59
                   </Badge>
@@ -186,32 +191,62 @@ const Product = () => {
                   )}
                 </div>
 
-                {/* Prix */}
-                <div className="space-y-2">
+                {/* Prix avec urgence */}
+                <div className="space-y-3">
                   {isOfferActive ? (
-                    <>
-                      <div className="flex items-center gap-3">
-                        <span className="text-4xl font-bold text-green-600">
-                          {totalLaunchPrice}€
-                        </span>
-                        <span className="text-2xl text-muted-foreground line-through">
-                          {totalOriginalPrice}€
-                        </span>
-                        <Badge variant="secondary" className="bg-green-500/10 text-green-700">
-                          –{totalSavings}€
-                        </Badge>
+                    <div className="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 rounded-xl p-4">
+                      <div className="text-center space-y-2">
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                          <Badge variant="destructive" className="animate-pulse">
+                            🔥 PRIX DE LANCEMENT
+                          </Badge>
+                          <Badge variant="secondary" className="bg-green-500 text-white">
+                            –20%
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex items-center justify-center gap-4">
+                          <span className="text-5xl font-bold text-green-600">
+                            {totalLaunchPrice}€
+                          </span>
+                          <div className="text-center">
+                            <span className="text-2xl text-muted-foreground line-through block">
+                              {totalOriginalPrice}€
+                            </span>
+                            <span className="text-sm text-red-600 font-medium">
+                              Prix normal
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-white rounded-lg p-3 border border-green-300">
+                          <div className="flex items-center justify-center gap-2 text-green-700">
+                            <CheckCircle className="h-5 w-5" />
+                            <span className="font-bold text-lg">
+                              VOUS ÉCONOMISEZ {totalSavings}€ !
+                            </span>
+                          </div>
+                          <p className="text-xs text-green-600 mt-1">
+                            Plus que {timeRemaining ? timeRemaining : 'quelques heures'} pour profiter de cette offre
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Prix après lancement: {totalOriginalPrice}€
-                      </p>
-                    </>
+                    </div>
                   ) : (
-                    <div className="text-4xl font-bold">
-                      {totalOriginalPrice}€
+                    <div className="text-center bg-gray-50 rounded-xl p-4">
+                      <div className="text-4xl font-bold text-gray-900">
+                        {totalOriginalPrice}€
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Prix public
+                      </p>
                     </div>
                   )}
                 </div>
               </div>
+
+              {/* Social Proof */}
+              <VisitorCounter productName={product.name} />
 
               {/* Color Selection */}
               <div>
@@ -263,21 +298,36 @@ const Product = () => {
               {/* Add to Cart */}
               {stockRemaining > 0 ? (
                 <div className="space-y-3">
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
+                    <div className="flex items-center text-orange-700 text-sm">
+                      <AlertTriangle className="h-4 w-4 mr-2" />
+                      <span className="font-medium">Prix normal dès le 16 octobre : {totalOriginalPrice}€</span>
+                    </div>
+                  </div>
+                  
                   <Button 
                     variant="hero" 
                     size="lg" 
-                    className="w-full"
+                    className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold"
                     onClick={handleAddToCart}
                   >
                     <ShoppingCart className="mr-2 h-5 w-5" />
                     {isOfferActive 
-                      ? `Ajouter — ${totalLaunchPrice}€ (–20%)` 
-                      : `Ajouter — ${totalOriginalPrice}€`
+                      ? `🔥 RÉSERVER MAINTENANT — ${totalLaunchPrice}€ (-20%)` 
+                      : `SÉCURISER MON ACHAT — ${totalOriginalPrice}€`
                     }
                   </Button>
-                  <p className="text-xs text-center text-muted-foreground">
-                    Limité à 1 par client
-                  </p>
+                  
+                  <div className="text-center space-y-1">
+                    <p className="text-xs text-orange-600 font-medium">
+                      ⚡ Limité à 1 par client • Plus que {stockRemaining} disponibles
+                    </p>
+                    {isOfferActive && (
+                      <p className="text-xs text-green-600 font-medium">
+                        ✓ Vous économisez {totalSavings}€ aujourd'hui !
+                      </p>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -315,6 +365,12 @@ const Product = () => {
                   ))}
                 </ul>
               </Card>
+
+              {/* Trust & Guarantees */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Nos garanties</h3>
+                <TrustBadges />
+              </div>
             </div>
           </div>
 

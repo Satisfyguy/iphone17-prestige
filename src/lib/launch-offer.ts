@@ -7,8 +7,7 @@ export const LAUNCH_OFFER_CONFIG = {
   endDate: new Date('2025-10-15T23:59:59+02:00'),
   discountPercentage: 20,
   stockPerProduct: 10,
-  maxPerCustomer: 1,
-  reservationTTL: 600, // 10 minutes en secondes
+  maxPerCustomer: 1
 };
 
 // Types pour l'offre de lancement
@@ -133,13 +132,13 @@ export class LaunchOfferUtils {
     };
   }
 
-  // Obtenir le message de réservation
-  static getReservationMessage(expiresAt: number): string {
+  // Obtenir le message de paiement
+  static getPaymentMessage(expiresAt: number): string {
     const remaining = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
     const minutes = Math.floor(remaining / 60);
     const seconds = remaining % 60;
     
-    return `Votre pièce est réservée ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `Temps restant pour finaliser l'achat ${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   // Vérifier si un client peut acheter (limite 1 par client)

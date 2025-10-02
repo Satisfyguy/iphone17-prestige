@@ -313,8 +313,8 @@ const Product = () => {
                   >
                     <ShoppingCart className="mr-2 h-5 w-5" />
                     {isOfferActive 
-                      ? `🔥 RÉSERVER MAINTENANT — ${totalLaunchPrice}€ (-20%)` 
-                      : `SÉCURISER MON ACHAT — ${totalOriginalPrice}€`
+                      ? `🔥 ACHETER MAINTENANT — ${totalLaunchPrice}€ (-20%)` 
+                      : `ACHETER MAINTENANT — ${totalOriginalPrice}€`
                     }
                   </Button>
                   

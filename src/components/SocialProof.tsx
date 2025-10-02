@@ -80,14 +80,14 @@ export const VisitorCounter = ({ productName }: { productName?: string }) => {
       <div className="flex items-center space-x-2 text-blue-700">
         <Users className="h-4 w-4" />
         <span className="text-sm font-medium">
-          iPhone 17 disponible - Stock limité Apple neuf
+          {productName === "iPhone Air" ? "iPhone Air disponible" : "iPhone 17 disponible"} - Stock limité Apple neuf
         </span>
       </div>
       
       <div className="flex items-center space-x-2 text-green-700">
         <ShoppingBag className="h-4 w-4" />
         <span className="text-sm font-medium">
-          iPhone 17 disponible - Stock limité 10 unités par modèle
+          {productName === "iPhone Air" ? "iPhone Air disponible" : "iPhone 17 disponible"} - Stock limité 10 unités par modèle
         </span>
       </div>
 

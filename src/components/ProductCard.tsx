@@ -61,7 +61,7 @@ export const ProductCard = ({ id, name, image, price, launchPrice, savings, feat
           {/* Microcopie d'urgence */}
           <div className="flex items-center text-xs text-orange-500 font-medium mb-2">
             <Clock className="h-3 w-3 mr-1" />
-            Premiers arrivés, premiers servis
+            Achat immédiat - Stock limité
           </div>
           
           {/* Prix */}
@@ -86,7 +86,7 @@ export const ProductCard = ({ id, name, image, price, launchPrice, savings, feat
           
           <Link to={`/produit/${id}`}>
             <Button className="w-full" variant="hero">
-              {launchPrice ? `Réserver maintenant • ${launchPrice}` : `Découvrir • ${price}`}
+              {launchPrice ? `Acheter maintenant • ${launchPrice}` : `Acheter • ${price}`}
             </Button>
           </Link>
         </div>

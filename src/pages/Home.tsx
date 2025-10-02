@@ -16,7 +16,7 @@ const Home = () => {
       <SEO 
         title="iPhone 17 disponible - Pro, Pro Max, Air en stock | TekL∞p"
         description="iPhone 17 disponible maintenant. iPhone 17 Pro, Pro Max et Air neufs sous emballage Apple en stock. Livraison gratuite 48h, garantie Apple officielle."
-        keywords="iPhone 17 disponible, iPhone 17 Pro disponible, iPhone 17 Pro Max disponible, iPhone 17 Air disponible, Apple neuf, stock iPhone 17, acheter iPhone 17"
+        keywords="iPhone 17 disponible, iPhone 17 Pro disponible, iPhone 17 Pro Max disponible, iPhone Air disponible, Apple neuf, stock iPhone 17, acheter iPhone 17"
         type="website"
       />
       <OrganizationSchema />
@@ -37,12 +37,12 @@ const Home = () => {
                 iPhone 17 disponible maintenant
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground">
-                iPhone 17, Pro et Pro Max neufs sous emballage Apple. –20% jusqu'au 15 octobre, 23:59. Stock disponible.
+                iPhone 17, Pro, Pro Max et Air neufs sous emballage Apple. –20% jusqu'au 15 octobre, 23:59. Stock disponible.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link to="/comparateur">
                   <Button variant="hero" size="lg">
-                    Découvrir la collection
+                    Acheter maintenant
                   </Button>
                 </Link>
                 <Link to="/produit/iphone-17-pro">

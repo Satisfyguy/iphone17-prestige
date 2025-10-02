@@ -15,29 +15,33 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 border-b border-border/50 shadow-apple-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-32 items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 group">
             <img 
               src="/tekloop-logo.svg" 
               alt="TekL∞p" 
-              className="h-28 w-auto transition-opacity hover:opacity-80"
+              className="h-28 w-auto transition-all duration-300 group-hover:scale-105 group-hover:opacity-90"
             />
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-sm font-medium transition-smooth hover:text-primary">
+            <Link to="/" className="text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 relative group">
               Accueil
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/comparateur" className="text-sm font-medium transition-smooth hover:text-primary">
+            <Link to="/comparateur" className="text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 relative group">
               Comparateur
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/accessoires" className="text-sm font-medium transition-smooth hover:text-primary">
+            <Link to="/accessoires" className="text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 relative group">
               Accessoires
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/support" className="text-sm font-medium transition-smooth hover:text-primary">
+            <Link to="/support" className="text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 relative group">
               Support
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </nav>
 

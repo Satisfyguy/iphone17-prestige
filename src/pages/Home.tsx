@@ -54,14 +54,17 @@ const Home = () => {
             </div>
             
             <div className="mt-16 animate-fade-in">
-              <img 
-                src="/iphone-17-colors.webp" 
-                alt="iPhone 17 - tous les coloris : noir, blanc, bleu, lavande disponibles avec livraison gratuite" 
-                width="1200"
-                height="800"
-                loading="eager"
-                className="w-full max-w-4xl mx-auto rounded-2xl shadow-apple-lg"
-              />
+              <div className="relative group">
+                <img 
+                  src="/iphone-17-colors.webp" 
+                  alt="iPhone 17 - tous les coloris : noir, blanc, bleu, lavande disponibles avec livraison gratuite" 
+                  width="1200"
+                  height="800"
+                  loading="eager"
+                  className="w-full max-w-4xl mx-auto rounded-2xl shadow-apple-lg transition-all duration-700 group-hover:shadow-2xl group-hover:scale-[1.02]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -170,41 +173,41 @@ const Home = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <Card className="p-6 text-center gradient-card shadow-apple-md">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Truck className="h-6 w-6 text-primary" />
+              <Card className="p-6 text-center gradient-card shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors duration-300">
+                  <Truck className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Livraison gratuite</h3>
+                <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors duration-300">Livraison gratuite</h3>
                 <p className="text-sm text-muted-foreground">
                   Dès 50€ d'achat partout en France
                 </p>
               </Card>
               
-              <Card className="p-6 text-center gradient-card shadow-apple-md">
-                <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-6 w-6 text-success" />
+              <Card className="p-6 text-center gradient-card shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1">
+                <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-success/20 transition-colors duration-300">
+                  <Shield className="h-6 w-6 text-success group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Garantie Apple</h3>
+                <h3 className="text-lg font-semibold mb-2 group-hover:text-success transition-colors duration-300">Garantie Apple</h3>
                 <p className="text-sm text-muted-foreground">
                   Produits 100% authentiques garantis
                 </p>
               </Card>
               
-              <Card className="p-6 text-center gradient-card shadow-apple-md">
-                <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <RefreshCw className="h-6 w-6 text-warning" />
+              <Card className="p-6 text-center gradient-card shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1">
+                <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-warning/20 transition-colors duration-300">
+                  <RefreshCw className="h-6 w-6 text-warning group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Retours 30 jours</h3>
+                <h3 className="text-lg font-semibold mb-2 group-hover:text-warning transition-colors duration-300">Retours 30 jours</h3>
                 <p className="text-sm text-muted-foreground">
                   Changez d'avis sans frais
                 </p>
               </Card>
               
-              <Card className="p-6 text-center gradient-card shadow-apple-md">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-6 w-6 text-primary" />
+              <Card className="p-6 text-center gradient-card shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors duration-300">
+                  <Star className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Support expert</h3>
+                <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors duration-300">Support expert</h3>
                 <p className="text-sm text-muted-foreground">
                   Assistance 7j/7 par des experts
                 </p>
@@ -221,42 +224,42 @@ const Home = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <Card className="p-6 gradient-card shadow-apple-md">
+              <Card className="p-6 gradient-card shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-warning text-warning" />
+                    <Star key={i} className="h-4 w-4 fill-warning text-warning group-hover:scale-110 transition-transform duration-300" style={{transitionDelay: `${i * 50}ms`}} />
                   ))}
                 </div>
-                <p className="text-sm mb-4">
+                <p className="text-sm mb-4 group-hover:text-foreground transition-colors duration-300">
                   "L'iPhone 17 Pro Max est incroyable ! La qualité photo est exceptionnelle et la batterie tient toute la journée."
                 </p>
-                <p className="text-sm font-semibold">Sophie M.</p>
+                <p className="text-sm font-semibold group-hover:text-primary transition-colors duration-300">Sophie M.</p>
                 <p className="text-xs text-muted-foreground">Cliente vérifiée</p>
               </Card>
               
-              <Card className="p-6 gradient-card shadow-apple-md">
+              <Card className="p-6 gradient-card shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-warning text-warning" />
+                    <Star key={i} className="h-4 w-4 fill-warning text-warning group-hover:scale-110 transition-transform duration-300" style={{transitionDelay: `${i * 50}ms`}} />
                   ))}
                 </div>
-                <p className="text-sm mb-4">
+                <p className="text-sm mb-4 group-hover:text-foreground transition-colors duration-300">
                   "Livraison rapide et produit impeccable. Le service client est très réactif. Je recommande !"
                 </p>
-                <p className="text-sm font-semibold">Thomas L.</p>
+                <p className="text-sm font-semibold group-hover:text-primary transition-colors duration-300">Thomas L.</p>
                 <p className="text-xs text-muted-foreground">Client vérifié</p>
               </Card>
               
-              <Card className="p-6 gradient-card shadow-apple-md">
+              <Card className="p-6 gradient-card shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-warning text-warning" />
+                    <Star key={i} className="h-4 w-4 fill-warning text-warning group-hover:scale-110 transition-transform duration-300" style={{transitionDelay: `${i * 50}ms`}} />
                   ))}
                 </div>
-                <p className="text-sm mb-4">
+                <p className="text-sm mb-4 group-hover:text-foreground transition-colors duration-300">
                   "L'iPhone 17 Air est parfait pour moi. Ultra léger et suffisamment puissant pour tous mes besoins."
                 </p>
-                <p className="text-sm font-semibold">Marie D.</p>
+                <p className="text-sm font-semibold group-hover:text-primary transition-colors duration-300">Marie D.</p>
                 <p className="text-xs text-muted-foreground">Cliente vérifiée</p>
               </Card>
             </div>

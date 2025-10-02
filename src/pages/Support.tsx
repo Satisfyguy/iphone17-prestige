@@ -5,10 +5,16 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SEO } from "@/components/SEO";
 
 const Support = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Support & Assistance iPhone 17 - FAQ et Contact | TechLoop"
+        description="Besoin d'aide avec votre iPhone 17 ? FAQ complète, support client 7j/7, garantie Apple, livraison, retours. Contactez nos experts Apple."
+        keywords="support iPhone 17, FAQ iPhone, assistance Apple, service client iPhone, garantie Apple, retour iPhone"
+      />
       <Header />
       
       <main className="flex-1 py-12">

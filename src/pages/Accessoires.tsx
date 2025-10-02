@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 
 const Accessoires = () => {
   const accessories = [
@@ -29,6 +30,11 @@ const Accessoires = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Accessoires iPhone 17 - Coques, AirPods, Chargeurs MagSafe | TechLoop"
+        description="Découvrez nos accessoires iPhone 17 : coques MagSafe, chargeurs sans fil, AirPods Pro, Apple Watch. Livraison gratuite, garantie Apple officielle."
+        keywords="accessoires iPhone 17, coque iPhone 17, MagSafe, AirPods Pro, Apple Watch, chargeur iPhone"
+      />
       <Header />
       
       <main className="flex-1 py-12">

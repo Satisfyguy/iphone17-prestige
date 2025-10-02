@@ -2,10 +2,16 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Shield, Award, Users, Heart } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 const APropos = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="À propos de TechLoop - Revendeur Apple Agréé depuis 2014"
+        description="TechLoop est un revendeur Apple agréé spécialisé dans l'iPhone 17. Plus de 50 000 clients satisfaits, garantie officielle Apple, service client expert."
+        keywords="revendeur Apple agréé, TechLoop, vendeur iPhone officiel, garantie Apple, AppleCare"
+      />
       <Header />
       
       <main className="flex-1 py-12">

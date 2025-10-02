@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { products } from "@/data/products";
 import { Link } from "react-router-dom";
-import { Check, X } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 const Comparateur = () => {
   const [selectedProducts, setSelectedProducts] = useState(products.map(p => p.id));
@@ -24,6 +24,11 @@ const Comparateur = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Comparateur iPhone 17, Pro, Pro Max, Air - Trouvez le meilleur | TechLoop"
+        description="Comparez les iPhone 17, iPhone 17 Air, iPhone 17 Pro et Pro Max. Découvrez les différences de prix, écran, appareil photo, autonomie. Guide d'achat complet."
+        keywords="comparateur iPhone 17, iPhone 17 vs Pro, iPhone 17 Pro Max vs Pro, différence iPhone 17, quel iPhone choisir"
+      />
       <Header />
       
       <main className="flex-1 py-12">

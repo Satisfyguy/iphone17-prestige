@@ -4,15 +4,21 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/data/products";
-import { Check, Truck, Shield, RefreshCw, Star } from "lucide-react";
+import { Truck, Shield, RefreshCw, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
-// Remove all direct image imports as they are now in the public directory
-// import iphone17Colors from "@/assets/iphone-17-colors.webp";
-// import iphoneAirColors from "@/assets/iphone-air-colors.webp";
+import { SEO } from "@/components/SEO";
+import { OrganizationSchema } from "@/components/OrganizationSchema";
 
 const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="TechLoop - iPhone 17, Pro, Pro Max, Air | Livraison Gratuite"
+        description="Achetez l'iPhone 17, iPhone 17 Air, iPhone 17 Pro et Pro Max. Livraison gratuite, garantie Apple officielle, paiement USDT sécurisé. Stock disponible."
+        keywords="iPhone 17, iPhone 17 Pro, iPhone 17 Pro Max, iPhone 17 Air, Apple France, acheter iPhone, paiement crypto, USDT"
+        type="website"
+      />
+      <OrganizationSchema />
       <Header />
       
       <main className="flex-1">
@@ -43,7 +49,10 @@ const Home = () => {
             <div className="mt-16 animate-fade-in">
               <img 
                 src="/iphone-17-colors.webp" 
-                alt="iPhone 17" 
+                alt="iPhone 17 - tous les coloris : noir, blanc, bleu, lavande disponibles avec livraison gratuite" 
+                width="1200"
+                height="800"
+                loading="eager"
                 className="w-full max-w-4xl mx-auto rounded-2xl shadow-apple-lg"
               />
             </div>

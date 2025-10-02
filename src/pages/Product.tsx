@@ -8,6 +8,8 @@ import { getProductById } from "@/data/products";
 import { ShoppingCart, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
+import { SEO } from "@/components/SEO";
+import { ProductSchema } from "@/components/ProductSchema";
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,6 +62,21 @@ const Product = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title={`${product.fullName} - ${selectedColor} ${selectedStorage} | TechLoop`}
+        description={`Achetez ${product.fullName} en ${selectedColor} avec ${selectedStorage} de stockage. ${product.description} Livraison gratuite, garantie Apple.`}
+        keywords={`${product.name}, ${product.fullName}, iPhone ${selectedStorage}, iPhone ${selectedColor}, acheter ${product.name}`}
+        ogImage={currentColorImage}
+        type="product"
+      />
+      <ProductSchema 
+        name={`${product.fullName} ${selectedColor} ${selectedStorage}`}
+        description={product.description}
+        image={currentColorImage || ""}
+        price={totalPrice}
+        sku={`${product.id}-${selectedColor}-${selectedStorage}`}
+        url={`${window.location.origin}/product/${product.id}`}
+      />
       <Header />
       
       <main className="flex-1 py-12">
@@ -79,7 +96,10 @@ const Product = () => {
               <div className="aspect-square rounded-2xl overflow-hidden bg-secondary shadow-apple-lg">
                 <img 
                   src={currentColorImage} 
-                  alt={`${product.name} - ${selectedColor}`}
+                  alt={`${product.fullName} couleur ${selectedColor} avec ${selectedStorage} de stockage - photo officielle Apple haute résolution`}
+                  width="800"
+                  height="800"
+                  loading="eager"
                   className="w-full h-full object-contain"
                 />
               </div>

@@ -1,1 +1,24 @@
 project_id = "rhigaegceftzmyxivfph"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+
+[functions.create-payment-quote]
+verify_jwt = true
+
+[functions.check-payment-status]
+verify_jwt = true
+
+[functions.submit-transaction]
+verify_jwt = true
+
+[functions.create-order]
+verify_jwt = true

@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { Link, useNavigate } from "react-router-dom";
-import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useMemo, useState } from "react";
 import * as QRCode from "qrcode";
+import { supabase } from "@/integrations/supabase/client";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -51,17 +51,16 @@ const Checkout = () => {
     }
     setIsRequesting(true);
     try {
-      const res = await apiFetch("/api/payment/quote", {
-        method: "POST",
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('create-payment-quote', {
+        body: {
           currency: "EUR",
           amount: eurTotal,
           network,
           cart: items.map(i => ({ id: i.id, color: i.color, storage: i.storage, qty: i.qty, price: i.price })),
-        }),
+        },
       });
-      if (!res.ok) throw new Error("Quote failed");
-      const data = await res.json();
+      if (error) throw error;
+      if (!data) throw new Error("Quote failed");
       setQuote(data);
       // compute total duration for progress
       const ttl = new Date(data.expiresAt).getTime() - Date.now();
@@ -91,9 +90,9 @@ const Checkout = () => {
   const pollStatus = async () => {
     if (!quote) return;
     try {
-      const res = await apiFetch(`/api/payment/status/${quote.quoteId}`);
-      if (!res.ok) throw new Error("status failed");
-      const data = await res.json();
+      const { data, error } = await supabase.functions.invoke(`check-payment-status/${quote.quoteId}`);
+      if (error) throw error;
+      if (!data) throw new Error("status failed");
       const mapped = { state: data.status as string, confirmations: data.confirmations as number | undefined, txHash: data.txHash as string | undefined };
       setStatus(mapped);
     } catch (e) {
@@ -106,12 +105,11 @@ const Checkout = () => {
     if (!quote) return;
     if (!txHashInput.trim()) return alert("Entrez le hash de la transaction.");
     try {
-      const res = await apiFetch('/api/payment/submit-tx', {
-        method: 'POST',
-        body: JSON.stringify({ quoteId: quote.quoteId, txHash: txHashInput.trim() })
+      const { data, error } = await supabase.functions.invoke('submit-transaction', {
+        body: { quoteId: quote.quoteId, txHash: txHashInput.trim() }
       });
-      if (!res.ok) throw new Error('submit failed');
-      const data = await res.json();
+      if (error) throw error;
+      if (!data) throw new Error('submit failed');
       setStatus({ state: data.status as string, txHash: data.txHash as string | undefined });
       alert('Transaction soumise. Vérification en cours.');
     } catch (e) {
@@ -344,9 +342,10 @@ const Checkout = () => {
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                                 return;
                               }
-                              const res = await apiFetch('/api/orders', { method: 'POST', body: JSON.stringify({ quoteId: quote.quoteId }) });
-                              if (!res.ok) return alert('Création de commande échouée');
-                              const order = await res.json();
+                              const { data: order, error: orderError } = await supabase.functions.invoke('create-order', { 
+                                body: { quoteId: quote.quoteId } 
+                              });
+                              if (orderError || !order) return alert('Création de commande échouée');
                               const params = new URLSearchParams({ orderId: order.orderId, txHash: status?.txHash || '', network: quote.network });
                               window.location.href = `/success?${params.toString()}`;
                             }}>

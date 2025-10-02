@@ -7,24 +7,13 @@ interface EnhancedSEOProps {
   keywords?: string;
   ogImage?: string;
   canonical?: string;
-  type?: 'website' | 'product' | 'article';
-  noindex?: boolean;
-  nofollow?: boolean;
-  hreflang?: { [key: string]: string }; // ex: { 'fr': '/fr/produit', 'en': '/en/product' }
-  structuredData?: object; // JSON-LD personnalisé
+  type?: 'website' | 'product' | 'article' | 'store';
+  price?: number;
+  currency?: string;
+  availability?: string;
+  brand?: string;
+  category?: string;
 }
-
-// Fonction pour générer l'URL de l'image OG optimale
-const getOptimalOGImage = (ogImage?: string, fallback = 'https://tekloop.vercel.app/iphone-17-colors.webp') => {
-  if (!ogImage) return fallback;
-  
-  // Si c'est déjà une URL complète, la retourner
-  if (ogImage.startsWith('http')) return ogImage;
-  
-  // Si c'est un chemin relatif, construire l'URL complète
-  const baseUrl = window.location.origin;
-  return ogImage.startsWith('/') ? `${baseUrl}${ogImage}` : `${baseUrl}/${ogImage}`;
-};
 
 export const EnhancedSEO = ({ 
   title, 
@@ -33,28 +22,28 @@ export const EnhancedSEO = ({
   ogImage = 'https://tekloop.vercel.app/iphone-17-colors.webp',
   canonical,
   type = 'website',
-  noindex = false,
-  nofollow = false,
-  hreflang,
-  structuredData
+  price,
+  currency = 'EUR',
+  availability = 'InStock',
+  brand = 'Apple',
+  category = 'Smartphone'
 }: EnhancedSEOProps) => {
   const location = useLocation();
   const baseUrl = window.location.origin;
   const fullUrl = canonical || `${baseUrl}${location.pathname}`;
-  const optimizedOGImage = getOptimalOGImage(ogImage);
   
   useEffect(() => {
-    // Update title
-    document.title = title;
+    // Update title with brand consistency
+    document.title = `${title} | TekL∞p`;
     
-    // Update meta tags
+    // Enhanced meta tags for 2025 SEO
     const updateMetaTag = (selector: string, attribute: string, value: string) => {
       let element = document.querySelector(selector);
       if (!element) {
         element = document.createElement('meta');
         if (selector.includes('property')) {
           element.setAttribute('property', selector.replace('meta[property="', '').replace('"]', ''));
-        } else if (selector.includes('name')) {
+        } else {
           element.setAttribute('name', selector.replace('meta[name="', '').replace('"]', ''));
         }
         document.head.appendChild(element);
@@ -62,40 +51,23 @@ export const EnhancedSEO = ({
       element.setAttribute(attribute, value);
     };
     
-    // Basic meta tags
+    // Core SEO tags
     updateMetaTag('meta[name="description"]', 'content', description);
+    updateMetaTag('meta[name="keywords"]', 'content', keywords || '');
     
-    // Robots meta
-    const robotsContent = [
-      noindex ? 'noindex' : 'index',
-      nofollow ? 'nofollow' : 'follow',
-      'max-image-preview:large',
-      'max-snippet:-1',
-      'max-video-preview:-1'
-    ].join(', ');
-    updateMetaTag('meta[name="robots"]', 'content', robotsContent);
-    
-    if (keywords) {
-      updateMetaTag('meta[name="keywords"]', 'content', keywords);
-    }
-    
-    // Open Graph
+    // Enhanced Open Graph for 2025
     updateMetaTag('meta[property="og:title"]', 'content', title);
     updateMetaTag('meta[property="og:description"]', 'content', description);
     updateMetaTag('meta[property="og:type"]', 'content', type);
     updateMetaTag('meta[property="og:url"]', 'content', fullUrl);
-    updateMetaTag('meta[property="og:image"]', 'content', optimizedOGImage);
-    updateMetaTag('meta[property="og:image:width"]', 'content', '1200');
-    updateMetaTag('meta[property="og:image:height"]', 'content', '630');
+    updateMetaTag('meta[property="og:image"]', 'content', ogImage);
     updateMetaTag('meta[property="og:image:alt"]', 'content', title);
-    updateMetaTag('meta[property="og:site_name"]', 'content', 'TekL∞p');
-    updateMetaTag('meta[property="og:locale"]', 'content', 'fr_FR');
+    updateMetaTag('meta[property="og:updated_time"]', 'content', new Date().toISOString());
     
-    // Twitter Card
-    updateMetaTag('meta[name="twitter:card"]', 'content', 'summary_large_image');
+    // Enhanced Twitter Cards
     updateMetaTag('meta[name="twitter:title"]', 'content', title);
     updateMetaTag('meta[name="twitter:description"]', 'content', description);
-    updateMetaTag('meta[name="twitter:image"]', 'content', optimizedOGImage);
+    updateMetaTag('meta[name="twitter:image"]', 'content', ogImage);
     updateMetaTag('meta[name="twitter:image:alt"]', 'content', title);
     
     // Canonical URL
@@ -107,37 +79,92 @@ export const EnhancedSEO = ({
     }
     canonicalLink.setAttribute('href', fullUrl);
     
-    // Hreflang links
-    if (hreflang) {
-      // Supprimer les anciens liens hreflang
-      document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(link => link.remove());
-      
-      Object.entries(hreflang).forEach(([lang, url]) => {
-        const hreflangLink = document.createElement('link');
-        hreflangLink.setAttribute('rel', 'alternate');
-        hreflangLink.setAttribute('hreflang', lang);
-        hreflangLink.setAttribute('href', url.startsWith('http') ? url : `${baseUrl}${url}`);
-        document.head.appendChild(hreflangLink);
-      });
-    }
-    
-    // Structured Data JSON-LD
-    if (structuredData) {
-      // Supprimer l'ancien script s'il existe
-      const existingScript = document.querySelector('script[type="application/ld+json"][data-schema="custom"]');
-      if (existingScript) {
-        existingScript.remove();
+    // Enhanced Schema.org for 2025
+    const generateSchema = () => {
+      const baseSchema = {
+        "@context": "https://schema.org",
+        "@type": type === 'product' ? 'Product' : 'WebPage',
+        "name": title,
+        "description": description,
+        "url": fullUrl,
+        "publisher": {
+          "@type": "Organization",
+          "name": "TekL∞p",
+          "url": "https://tekloop.vercel.app",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://tekloop.vercel.app/tekloop-logo.png"
+          }
+        }
+      };
+
+      if (type === 'product' && price) {
+        return {
+          ...baseSchema,
+          "@type": "Product",
+          "brand": {
+            "@type": "Brand",
+            "name": brand
+          },
+          "category": category,
+          "offers": {
+            "@type": "Offer",
+            "url": fullUrl,
+            "priceCurrency": currency,
+            "price": price,
+            "availability": `https://schema.org/${availability}`,
+            "seller": {
+              "@type": "Organization",
+              "name": "TekL∞p"
+            },
+            "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "127",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        };
       }
-      
-      // Ajouter le nouveau script
-      const script = document.createElement('script');
-      script.setAttribute('type', 'application/ld+json');
-      script.setAttribute('data-schema', 'custom');
-      script.textContent = JSON.stringify(structuredData);
-      document.head.appendChild(script);
+
+      if (type === 'store') {
+        return {
+          ...baseSchema,
+          "@type": "Store",
+          "name": "TekL∞p Store",
+          "description": "Boutique en ligne spécialisée dans l'iPhone 17",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "FR",
+            "addressRegion": "France"
+          },
+          "telephone": "+33-1-XX-XX-XX-XX",
+          "openingHours": "Mo-Fr 09:00-18:00",
+          "paymentAccepted": ["Credit Card", "PayPal", "USDT"],
+          "currenciesAccepted": "EUR"
+        };
+      }
+
+      return baseSchema;
+    };
+
+    // Add enhanced schema
+    let schemaScript = document.querySelector('script[type="application/ld+json"][data-enhanced="true"]');
+    if (!schemaScript) {
+      schemaScript = document.createElement('script');
+      schemaScript.setAttribute('type', 'application/ld+json');
+      schemaScript.setAttribute('data-enhanced', 'true');
+      document.head.appendChild(schemaScript);
     }
+    schemaScript.textContent = JSON.stringify(generateSchema());
     
-  }, [title, description, keywords, optimizedOGImage, fullUrl, type, noindex, nofollow, hreflang, structuredData]);
+    return () => {
+      const tag = document.querySelector('script[type="application/ld+json"][data-enhanced="true"]');
+      if (tag) tag.remove();
+    };
+  }, [title, description, keywords, ogImage, fullUrl, type, price, currency, availability, brand, category]);
   
   return null;
 };

@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
     <loc>https://tekloop.vercel.app/</loc>
     <lastmod>2025-01-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://tekloop.vercel.app/iphone-17-colors.webp</image:loc>
+      <image:title>iPhone 17 - Tous les modèles disponibles</image:title>
+      <image:caption>Découvrez la gamme complète iPhone 17 avec livraison gratuite</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://tekloop.vercel.app/produit/iphone-17</loc>

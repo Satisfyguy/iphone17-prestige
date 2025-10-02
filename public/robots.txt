@@ -1,8 +1,30 @@
+# SEO 2025 - Enhanced Robots.txt
 User-agent: *
 Allow: /
 Disallow: /panier
 Disallow: /checkout
 Disallow: /login
 Disallow: /register
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
 
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+User-agent: facebookexternalhit
+Allow: /
+
+# Sitemaps
 Sitemap: https://tekloop.vercel.app/sitemap.xml
+Sitemap: https://tekloop.vercel.app/sitemap-images.xml
+Sitemap: https://tekloop.vercel.app/sitemap-news.xml
+
+# Host directive for canonical domain
+Host: https://tekloop.vercel.app

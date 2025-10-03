@@ -24,12 +24,11 @@ export default defineConfig(({ mode }) => ({
   build: {
     // SEO 2025 - Performance optimizations
     target: 'esnext',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
+    minify: 'esbuild',
+    // Equivalent esbuild options to drop console/debugger
+    // Note: esbuild uses 'drop' to remove console/debugger statements
+    esbuild: {
+      drop: ['console', 'debugger'],
     },
     rollupOptions: {
       output: {

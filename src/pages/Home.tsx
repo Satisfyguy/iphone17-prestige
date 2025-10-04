@@ -41,6 +41,8 @@ const Home = () => {
               {/* iPhone 17 Pro / Pro Max with selector */}
               <div className="text-center">
                 <div className="mb-6">
+                  <h3 className="text-2xl font-semibold mb-2 text-black">{proProduct.name}</h3>
+                  <p className="text-base text-gray-600 mb-4">Le Pro par excellence</p>
                   {/* Model selector */}
                   <div className="flex justify-center gap-2 mb-4">
                     <button
@@ -64,8 +66,6 @@ const Home = () => {
                       Pro Max
                     </button>
                   </div>
-                  <h3 className="text-2xl font-semibold mb-2 text-black">{proProduct.name}</h3>
-                  <p className="text-base text-gray-600 mb-4">Le Pro par excellence</p>
                 </div>
                 <div className="mb-8 flex items-center justify-center h-[500px] bg-white">
                   <img 
@@ -102,6 +102,8 @@ const Home = () => {
                 <div className="mb-6">
                   <h3 className="text-2xl font-semibold mb-2 text-black">{products[1].name}</h3>
                   <p className="text-base text-gray-600 mb-4">Ultra fin. Ultra léger.</p>
+                  {/* Spacer to match Pro selector height */}
+                  <div className="h-10"></div>
                 </div>
                 <div className="mb-8 flex items-center justify-center h-[500px] bg-white">
                   <img 
@@ -138,6 +140,8 @@ const Home = () => {
                 <div className="mb-6">
                   <h3 className="text-2xl font-semibold mb-2 text-black">{products[0].name}</h3>
                   <p className="text-base text-gray-600 mb-4">Un grand pas en avant</p>
+                  {/* Spacer to match Pro selector height */}
+                  <div className="h-10"></div>
                 </div>
                 <div className="mb-8 flex items-center justify-center h-[500px] bg-white">
                   <img 

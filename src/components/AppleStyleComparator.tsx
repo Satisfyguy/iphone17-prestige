@@ -43,7 +43,7 @@ export const AppleStyleComparator = ({ products: allProducts }: AppleStyleCompar
             <div className="flex flex-col items-center gap-2">
               <Link to="/">
                 <Button variant="ghost" className="text-blue-600 hover:text-blue-700 text-base">
-                  Magasiner iPhone →
+                  Acheter iPhone →
                 </Button>
               </Link>
               <p className="text-gray-600">
@@ -229,7 +229,7 @@ export const AppleStyleComparator = ({ products: allProducts }: AppleStyleCompar
           <div className="flex justify-center gap-4">
             <Link to="/">
               <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 py-3 text-base font-medium">
-                Magasiner iPhone
+                Acheter iPhone
               </Button>
             </Link>
             <Link to="/support">

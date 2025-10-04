@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { LaunchOfferBar } from "@/components/LaunchOfferBar";
 import ScrollToTop from "@/components/ScrollToTop";
 import Home from "./pages/Home";
@@ -28,6 +29,7 @@ const App = () => (
       <LaunchOfferBar />
       <Toaster />
       <Sonner />
+      <Analytics />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/produit/:id" element={<Product />} />

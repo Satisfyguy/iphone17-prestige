@@ -19,11 +19,9 @@ export const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-32 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 group">
-            <img 
-              src="/tekloop-logo.png" 
-              alt="TekL∞p" 
-              className="h-28 w-auto transition-all duration-300 group-hover:scale-105 group-hover:opacity-90 filter brightness-110 contrast-110"
-            />
+            <h1 className="text-3xl font-bold text-white transition-all duration-300 group-hover:scale-105 group-hover:opacity-90">
+              TechLoop
+            </h1>
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">

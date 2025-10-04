@@ -93,7 +93,7 @@ export const EnhancedSEO = ({
           "url": "https://tekloop.vercel.app",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://tekloop.vercel.app/tekloop-logo.png"
+            "url": "https://tekloop.vercel.app/favicon.svg"
           }
         }
       };

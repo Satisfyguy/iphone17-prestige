@@ -20,16 +20,10 @@ export const ProductCard = ({ id, name, image, price, launchPrice, savings, feat
     <Card className="overflow-hidden gradient-card border-border shadow-apple-md hover:shadow-apple-lg transition-all duration-300 group hover:-translate-y-1 hover:scale-[1.02] backdrop-blur-sm">
       <Link to={`/produit/${id}`}>
         <div className="aspect-[4/3] overflow-hidden bg-secondary relative">
-          {/* Badges de lancement */}
-          <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-            <Badge variant="secondary" className="text-xs font-semibold bg-green-500/90 text-white">
+          {/* Badge disponible discret en haut à droite */}
+          <div className="absolute top-3 right-3 z-10">
+            <Badge variant="secondary" className="text-xs font-semibold bg-green-500/80 text-white backdrop-blur-sm">
               ✓ DISPONIBLE
-            </Badge>
-            <Badge variant="outline" className="text-xs font-semibold bg-white/90 text-gray-700">
-              Neuf sous emballage
-            </Badge>
-            <Badge variant="destructive" className="text-xs font-semibold">
-              –20% lancement
             </Badge>
           </div>
           
@@ -48,6 +42,18 @@ export const ProductCard = ({ id, name, image, price, launchPrice, savings, feat
           </h3>
         </Link>
         
+        {/* Badges informatifs élégants */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          <Badge variant="outline" className="text-xs font-medium bg-blue-50 text-blue-700 border-blue-200">
+            📦 Neuf sous emballage
+          </Badge>
+          {launchPrice && (
+            <Badge variant="destructive" className="text-xs font-medium">
+              🎉 -20% Lancement
+            </Badge>
+          )}
+        </div>
+        
         <ul className="space-y-2">
           {features.map((feature, index) => (
             <li key={index} className="text-sm text-muted-foreground flex items-start">
@@ -65,15 +71,20 @@ export const ProductCard = ({ id, name, image, price, launchPrice, savings, feat
           </div>
           
           {/* Prix */}
-          <div className="space-y-1 mb-4">
+          <div className="space-y-2 mb-4">
             {launchPrice ? (
               <>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-green-600">{launchPrice}</span>
-                  <span className="text-lg text-muted-foreground line-through">{price}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl font-bold text-green-600">{launchPrice}</span>
+                  <span className="text-xl text-muted-foreground line-through">{price}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Prix après lancement: {price}
+                <div className="flex items-center gap-2">
+                  <Badge variant="destructive" className="text-xs font-bold">
+                    ÉCONOMISEZ {savings}
+                  </Badge>
+                </div>
+                <p className="text-xs text-orange-600 font-medium">
+                  ⏱️ Offre limitée - Prix normal après: {price}
                 </p>
               </>
             ) : (

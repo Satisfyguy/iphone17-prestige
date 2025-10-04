@@ -17,7 +17,7 @@ export const AppleStyleComparator = ({ products: allProducts }: AppleStyleCompar
   const productImages: Record<string, string> = {
     'iphone-17-pro': '/1.png',
     'iphone-17-pro-max': '/1.png',
-    'iphone-air': '/2.png',
+    'iphone-17-air': '/2.png',
     'iphone-17': '/3.png'
   };
 

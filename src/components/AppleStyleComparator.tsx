@@ -5,14 +5,19 @@ import { products } from "@/data/products";
 import { Link } from "react-router-dom";
 import { Package, Clock, ArrowLeft } from "lucide-react";
 import { LaunchOfferUtils } from "@/lib/launch-offer";
+import { AppleiPhone } from "./AppleiPhone";
 
 interface AppleStyleComparatorProps {
   products: typeof products;
 }
 
 export const AppleStyleComparator = ({ products: allProducts }: AppleStyleComparatorProps) => {
-  const [selectedProducts, setSelectedProducts] = useState(allProducts.map(p => p.id));
-  const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
+  const [selectedProducts, setSelectedProducts] = useState(allProducts.slice(0, 3).map(p => p.id));
+  const [selectedColors, setSelectedColors] = useState<Record<string, string>>({
+    'iphone-17-pro': 'orange',
+    'iphone-17-pro-max': 'blue', 
+    'iphone-air': 'lavender'
+  });
   const isOfferActive = LaunchOfferUtils.isOfferActive();
 
   const toggleProduct = (id: string) => {
@@ -35,58 +40,45 @@ export const AppleStyleComparator = ({ products: allProducts }: AppleStyleCompar
   const displayedProducts = allProducts.filter(p => selectedProducts.includes(p.id));
 
   const colorOptions = [
-    { name: "Space Black", value: "black", class: "bg-gray-900" },
-    { name: "Natural Titanium", value: "titanium", class: "bg-gray-300" },
-    { name: "White Titanium", value: "white", class: "bg-gray-100" },
-    { name: "Deep Blue", value: "blue", class: "bg-blue-900" },
-    { name: "Cosmic Orange", value: "orange", class: "bg-orange-600" },
-    { name: "Lavender", value: "lavender", class: "bg-purple-300" },
-    { name: "Sage", value: "sage", class: "bg-green-400" }
-  ];
-
-  const features = [
-    { category: "Display", label: "Screen Size", values: ["6.3″", "6.9″", "6.5″", "6.3″"]  },
-    { category: "Display", label: "Camera System", values: ["Pro System", "Pro Max System", "Advanced System", "Standard System"] },
-    { category: "Performance", label: "Chip", values: ["A18 Pro", "A18 Pro", "A18", "A18"] },
-    { category: "Performance", label: "Storage", values: ["256GB, 512GB, 1TB", "256GB, 512GB, 1TB", "128GB, 256GB, 512GB", "128GB, 256GB"] },
-    { category: "Camera", label: "Telephoto", values: ["Yes", "Yes", "Yes", "No"] },
-    { category: "Camera", label: "LiDAR Scanner", values: ["Yes", "Yes", "No", "No"] },
-    { category: "Design", label: "Material", values: ["Titanium", "Titanium", "Aluminum", "Aluminum"] },
-    { category: "Battery", label: "Video Playback", values: ["25 hours", "29 hours", "22 hours", "20 hours"] }
+    { name: "Orange Cosmique", value: "orange", class: "bg-orange-600", french: "Orange Cosmique" },
+    { name: "Bleu Profond", value: "blue", class: "bg-blue-900", french: "Bleu Profond" },
+    { name: "Argent", value: "silver", class: "bg-gray-300", french: "Argent" },
+    { name: "Blanc", value: "white", class: "bg-white border-gray-300", french: "Blanc" },
+    { name: "Lavande", value: "lavender", class: "bg-purple-300", french: "Lavande" },
+    { name: "Sauge", value: "sage", class: "bg-green-400", french: "Sauge" }
   ];
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-auto px-4 py-4">
+    <div className="min-h-screen bg-white text-black">
+      {/* Header Apple-style */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold">Compare iPhone models</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                  <ArrowLeft className="h-4 w-4 mr-1" />
-                  Back to Shop
+              <h1 className="text-3xl font-semibold mb-2">Comparez les modèles iPhone</h1>
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" className="text-blue-600 hover:text-blue-700">
+                  Magasiner iPhone →
                 </Button>
-                <span className="text-gray-500">|</span>
-                <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300">
-                  Get help choosing. Chat with a Specialist →
+                <span className="text-gray-400">|</span>
+                <Button variant="ghost" className="text-blue-600 hover:text-blue-700">
+                  Obtenir de l'aide pour choisir. Discuter avec un Spécialiste →
                 </Button>
               </div>
             </div>
             
             {/* Product Selector */}
             <div className="flex gap-2">
-              {allProducts.map(product => (
+              {allProducts.slice(0, 4).map(product => (
                 <Button
                   key={product.id}
                   variant={selectedProducts.includes(product.id) ? "default" : "outline"}
                   size="sm"
                   onClick={() => toggleProduct(product.id)}
-                  className={`${
+                  className={`rounded-full ${
                     selectedProducts.includes(product.id) 
-                      ? "bg-white text-black hover:bg-gray-100" 
-                      : "border-gray-600 text-gray-300 hover:bg-gray-800"
+                      ? "bg-black text-white hover:bg-gray-800" 
+                      : "border-gray-300 text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   {product.name}
@@ -97,138 +89,208 @@ export const AppleStyleComparator = ({ products: allProducts }: AppleStyleCompar
         </div>
       </div>
 
-      {/* Price Section */}
-      <div className="bg-gray-950 py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-8" style={{ gridTemplateColumns: `120px repeat(${displayedProducts.length}, 1fr)` }}>
+      {/* Colours Section */}
+      <div className="bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid gap-8" style={{ gridTemplateColumns: `60px repeat(${displayedProducts.length}, 1fr) 60px` }}>
+            {/* Space column */}
             <div></div>
+            
+            {/* Color headers */}
+            {displayedProducts.map((product) => (
+              <div key={product.id} className="text-center">
+                <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Finition</div>
+                <div className="flex justify-center gap-2">
+                  {colorOptions.slice(0, 3).map(color => (
+                    <button
+                      key={color.value}
+                      onClick={() => setProductColor(product.id, color.value)}
+                      className={`w-6 h-6 rounded-full border-2 ${
+                        selectedColors[product.id] === color.value
+                          ? "border-blue-500"
+                          : "border-gray-400"
+                      } ${color.class}`}
+                      title={color.french}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+            
+            {/* Space column */}
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Product Images */}
+      <div className="py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid gap-8" style={{ gridTemplateColumns: `60px repeat(${displayedProducts.length}, 1fr) 60px` }}>
+            <div></div>
+            
             {displayedProducts.map((product, index) => (
               <div key={product.id} className="text-center">
-                {isOfferActive ? (
+                <div className="mb-8 h-48 flex items-center justify-center bg-gradient-to-b from-gray-50 to-white rounded-2xl">
+                  {/* Apple-style iPhone images */}
+                  <div className="flex items-center gap-4">
+                    {/* Front view */}
+                    <AppleiPhone 
+                      model={product.name} 
+                      color={selectedColors[product.id]} 
+                      orientation="front"
+                    />
+                    {/* Back view */}
+                    <AppleiPhone 
+                      model={product.name} 
+                      color={selectedColors[product.id]} 
+                      orientation="back"
+                    />
+                  </div>
+                </div>
+                <Link to={`/produit/${product.id}`}>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full mb-2">
+                    Acheter
+                  </Button>
+                </Link>
+                <Link to={`/produit/${product.id}`}>
+                  <Button variant="ghost" className="text-blue-600 hover:text-blue-700">
+                    En savoir plus →
+                  </Button>
+                </Link>
+              </div>
+            ))}
+            
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Price Section */}
+      <div className="py-8 border-t border-gray-200">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid gap-8" style={{ gridTemplateColumns: `60px repeat(${displayedProducts.length}, 1fr) 60px` }}>
+            <div></div>
+            
+            {displayedProducts.map((product) => (
+              <div key={product.id} className="text-center">
+                {isOfferActive && product.launchPrice ? (
                   <div>
-                    <div className="text-3xl font-bold">€{product.launchPrice}</div>
-                    <div className="text-sm text-gray-400 line-through">€{product.price}</div>
-                    <Badge className="mt-2 bg-red-600">Save €{product.savings}</Badge>
+                    <div className="text-2xl font-semibold">À partir de {product.launchPrice}€</div>
+                    <div className="text-lg text-gray-500 line-through">ou {product.price}€</div>
+                    <Badge className="mt-2 bg-red-600 text-white">Nouveau</Badge>
                   </div>
                 ) : (
-                  <div className="text-3xl font-bold">€{product.price}</div>
+                  <div className="text-2xl font-semibold">À partir de {product.price}€</div>
                 )}
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Color Selection */}
-      <div className="py-6">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-8" style={{ gridTemplateColumns: `120px repeat(${displayedProducts.length}, 1fr)` }}>
-            <div className="flex items-center">
-              <span className="text-sm text-gray-400">Finish</span>
-            </div>
-            {displayedProducts.map((product) => (
-              <div key={product.id} className="flex flex-wrap gap-2">
-                {colorOptions.slice(0, 4).map(color => (
-                  <button
-                    key={color.value}
-                    onClick={() => setProductColor(product.id, color.value)}
-                    className={`w-6 h-6 rounded-full border-2 ${
-                      selectedColors[product.id] === color.value
-                        ? "border-white"
-                        : "border-gray-600"
-                    } ${color.class}`}
-                    title={color.name}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Features Comparison */}
-      <div className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-8" style={{ gridTemplateColumns: `200px repeat(${displayedProducts.length}, 1fr)` }}>
             
-            {/* Product Headers */}
             <div></div>
-            {displayedProducts.map((product) => (
-              <div key={product.id} className="relative">
-                <div className="text-center mb-8">
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="w-40 mx-auto mb-4"
-                  />
-                  <h3 className="text-xl font-semibold">{product.name}</h3>
-                  <Badge variant="secondary" className="mt-2 bg-green-600">
-                    Available
-                  </Badge>
-                </div>
-              </div>
-            ))}
+          </div>
+        </div>
+      </div>
 
-            {/* Features Rows */}
-            {features.map((feature, featureIndex) => (
-              <div key={featureIndex}>
-                <div className={`flex items-center font-medium ${
-                  feature.category === "Display" ? "text-blue-400" :
-                  feature.category === "Performance" ? "text-purple-400" :
-                  feature.category === "Camera" ? "text-green-400" :
-                  feature.category === "Design" ? "text-pink-400" :
-                  feature.category === "Battery" ? "text-yellow-400" : "text-white"
-                }`}>
-                  {feature.label}
-                </div>
-                {feature.values.map((value, valueIndex) => (
-                  <div key={valueIndex} className="text-center py-3 border-b border-gray-800">
-                    {displayedProducts[valueIndex] ? (
-                      <Badge variant="outline" className="border-gray-600 text-gray-300">
-                        {value}
-                      </Badge>
-                    ) : (
-                      <span className="text-gray-600">—</span>
-                    )}
+      {/* Features Section */}
+      <div className="py-12 border-t border-gray-200">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-left mb-8">
+            <h2 className="text-2xl font-semibold">Résumé</h2>
+          </div>
+          
+          <div className="space-y-8">
+            {/* Display Section */}
+            <div>
+              <div className="text-lg font-medium mb-4 text-blue-600">Display: Taille d'écran</div>
+              <div className="grid gap-8" style={{ gridTemplateColumns: `60px repeat(${displayedProducts.length}, 1fr) 60px` }}>
+                <div></div>
+                {displayedProducts.map((product) => (
+                  <div key={product.id} className="text-center">
+                    <div className="text-4xl font-bold mb-1">
+                      {product.name.includes('Pro Max') ? '6.9"' : 
+                       product.name.includes('Pro') ? '6.3"' : 
+                       product.name.includes('Air') ? '6.5"' : '6.3"'}
+                    </div>
+                    <div className="text-sm text-gray-600">Display Super Retina XDR¹</div>
+                    <div className="text-sm text-gray-600">Technologie ProMotion</div>
                   </div>
                 ))}
+                <div></div>
               </div>
-            ))}
+            </div>
 
-            {/* Buy Buttons */}
-            <div></div>
-            {displayedProducts.map((product) => (
-              <div key={product.id} className="mt-8">
-                <Link to={`/produit/${product.id}`}>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 font-semibold">
-                    Buy
-                  </Button>
-                </Link>
-                <Button variant="ghost" className="w-full mt-2 text-blue-400 hover:text-blue-300">
-                  Learn more →
-                </Button>
+            {/* Camera Section */}
+            <div>
+              <div className="text-lg font-medium mb-4 text-green-600">Appareil photo</div>
+              <div className="grid gap-8" style={{ gridTemplateColumns: `60px repeat(${displayedProducts.length}, 1fr) 60px` }}>
+                <div></div>
+                {displayedProducts.map((product) => (
+                  <div key={product.id} className="text-center">
+                    <div className="text-lg font-semibold">
+                      {product.name.includes('Pro') ? 'Système Pro' : 'Triple caméra'}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {product.name.includes('Pro') ? 'Photo et Vidéo Pro' : 'Photo et Vidéo avancées'}
+                    </div>
+                  </div>
+                ))}
+                <div></div>
               </div>
-            ))}
+            </div>
+
+            {/* Performance Section */}
+            <div>
+              <div className="text-lg font-medium mb-4 text-purple-600">Performance</div>
+              <div className="grid gap-8" style={{ gridTemplateColumns: `60px repeat(${displayedProducts.length}, 1fr) 60px` }}>
+                <div></div>
+                {displayedProducts.map((product) => (
+                  <div key={product.id} className="text-center">
+                    <div className="text-lg font-semibold">
+                      {product.name.includes('Pro') ? 'A18 Pro' : 'A18'}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {product.name.includes('Pro') ? 'iPhone Intelligence' : 'iPhone Intelligence'}
+                    </div>
+                  </div>
+                ))}
+                <div></div>
+              </div>
+            </div>
+
+            {/* Connectivity Section */}
+            <div>
+              <div className="text-lg font-medium mb-4 text-yellow-600">Connectivité</div>
+              <div className="grid gap-8" style={{ gridTemplateColumns: `60px repeat(${displayedProducts.length}, 1fr) 60px` }}>
+                <div></div>
+                {displayedProducts.map((product) => (
+                  <div key={product.id} className="text-center">
+                    <div className="text-lg font-semibold">5G (sous-6 et mmWave)</div>
+                    <div className="text-sm text-gray-600">Connectivité complète</div>
+                  </div>
+                ))}
+                <div></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Summary Section */}
-      <div className="py-12 bg-gray-950">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-semibold mb-4">Which iPhone 17 is right for you?</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            All iPhone 17 models feature advanced performance, stunning displays, and exceptional camera systems. 
-            Choose based on screen size, advanced features, and your budget.
+      {/* Footer Apple-style */}
+      <div className="bg-gray-50 py-12 border-t border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-2xl font-semibold mb-4">Quel iPhone 17 vous convient ?</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+            Tous les modèles iPhone 17 offrent des performances avancées, des écrans époustouflants et des systèmes photo exceptionnels. 
+            Choisissez selon la taille d'écran, les fonctionnalités avancées et votre budget.
           </p>
-          <div className="flex justify-center gap-4 mt-8">
+          <div className="flex justify-center gap-4">
             <Link to="/">
-              <Button variant="outline" className="border-gray-600 text-gray-300">
-                Shop iPhone
+              <Button className="bg-blue-600 text-white rounded-full px-6">
+                Magasiner iPhone
               </Button>
             </Link>
-            <Button variant="outline" className="border-gray-600 text-gray-300">
-              Chat with Specialist
+            <Button variant="outline" className="border-gray-300 rounded-full px-6">
+              Discuter avec un Spécialiste
             </Button>
           </div>
         </div>

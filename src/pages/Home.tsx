@@ -23,54 +23,8 @@ const Home = () => {
       <Header />
       
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="gradient-hero py-20 md:py-32">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in-up">
-              {/* Badge de lancement */}
-              <div className="inline-flex items-center px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-sm font-medium mb-4">
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                Série de lancement • –20% jusqu'au 15 octobre 23:59
-              </div>
-              
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-                iPhone 17 disponible maintenant
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground">
-                iPhone 17, Pro, Pro Max et Air neufs sous emballage Apple. –20% jusqu'au 15 octobre, 23:59. Stock disponible.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link to="/comparateur">
-                  <Button variant="hero" size="lg">
-                    Acheter maintenant
-                  </Button>
-                </Link>
-                <Link to="/produit/iphone-17-pro">
-                  <Button variant="outline" size="lg">
-                    iPhone 17 Pro
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            
-            <div className="mt-16 animate-fade-in">
-              <div className="relative group">
-                <img 
-                  src="/iphone-17-colors.webp" 
-                  alt="iPhone 17 - tous les coloris : noir, blanc, bleu, lavande disponibles avec livraison gratuite" 
-                  width="1200"
-                  height="800"
-                  loading="eager"
-                  className="w-full max-w-4xl mx-auto rounded-2xl shadow-apple-lg transition-all duration-700 group-hover:shadow-2xl group-hover:scale-[1.02]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Products Grid */}
-        <section className="py-20 bg-secondary">
+        <section className="py-20 bg-secondary mt-8">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="mb-4">iPhone 17 disponible - Tous modèles en stock</h2>

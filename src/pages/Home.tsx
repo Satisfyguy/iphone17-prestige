@@ -9,8 +9,11 @@ import { Card } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
 import { OrganizationSchema } from "@/components/OrganizationSchema";
 import { SecurityBadges } from "@/components/TrustBadges";
+import { useState } from "react";
 
 const Home = () => {
+  const [selectedProModel, setSelectedProModel] = useState<"iphone-17-pro" | "iphone-17-pro-max">("iphone-17-pro");
+  const proProduct = products.find(p => p.id === selectedProModel) || products[2];
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
@@ -35,37 +38,60 @@ const Home = () => {
             
             {/* Three Products Side by Side */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-              {/* iPhone 17 Pro */}
+              {/* iPhone 17 Pro / Pro Max with selector */}
               <div className="text-center">
                 <div className="mb-6">
-                  <h3 className="text-2xl font-semibold mb-2 text-black">{products[2].name}</h3>
+                  {/* Model selector */}
+                  <div className="flex justify-center gap-2 mb-4">
+                    <button
+                      onClick={() => setSelectedProModel("iphone-17-pro")}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        selectedProModel === "iphone-17-pro"
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      Pro
+                    </button>
+                    <button
+                      onClick={() => setSelectedProModel("iphone-17-pro-max")}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        selectedProModel === "iphone-17-pro-max"
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      Pro Max
+                    </button>
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 text-black">{proProduct.name}</h3>
                   <p className="text-base text-gray-600 mb-4">Le Pro par excellence</p>
                 </div>
                 <div className="mb-8 flex items-center justify-center h-[500px] bg-white">
                   <img 
                     src="/1.png"
-                    alt={products[2].name}
+                    alt={proProduct.name}
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="mb-4">
-                  <div className="text-3xl font-semibold text-black mb-1">À partir de {products[2].launchPrice}€</div>
-                  <div className="text-base text-gray-500 line-through mb-2">ou {products[2].price}€</div>
+                  <div className="text-3xl font-semibold text-black mb-1">À partir de {proProduct.launchPrice}€</div>
+                  <div className="text-base text-gray-500 line-through mb-2">ou {proProduct.price}€</div>
                 </div>
                 <div className="space-y-3">
-                  <Link to={`/produit/${products[2].id}`}>
+                  <Link to={`/produit/${proProduct.id}`}>
                     <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full py-3 text-base font-medium">
                       Acheter
                     </Button>
                   </Link>
-                  <Link to={`/produit/${products[2].id}`}>
+                  <Link to={`/produit/${proProduct.id}`}>
                     <Button variant="ghost" className="text-blue-600 hover:text-blue-700 text-base">
                       En savoir plus →
                     </Button>
                   </Link>
                 </div>
                 <div className="mt-6 space-y-2 text-sm text-gray-600">
-                  {products[2].features.map((feature, idx) => (
+                  {proProduct.features.map((feature, idx) => (
                     <p key={idx}>{feature}</p>
                   ))}
                 </div>
